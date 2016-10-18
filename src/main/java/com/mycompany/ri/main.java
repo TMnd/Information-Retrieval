@@ -9,8 +9,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -26,7 +30,8 @@ public class main {
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
         HashMap<ZipEntry, HashMap<String, String>> table = new HashMap<>();
-        ZipFile zipFile = new ZipFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\Mestrado\\RI\\corpus-RI.zip");
+        HashMap<String, HashMap<String, Double>> docIds = new HashMap<>();
+        ZipFile zipFile = new ZipFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\Mestrado\\RI\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -40,20 +45,50 @@ public class main {
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                char[] k = line.toCharArray();
-                for (int i = 0; i < k.length; i++) {
-                    if (!(k[0] == '@')) {
-                        break;
-                        //
+
+                if (!line.startsWith("@")) {
+                   //System.out.println(line.trim().split("\"")[0]);
+                    String[] namesList = line.split("\"");
+                    for(String x:namesList ){
+                        if(x.endsWith(",")){
+                           System.out.println(x); 
+                        }
+                        
                     }
+                    
+                    
+                   
+
+                   
+
+                    //Matcher m = Pattern.compile(".*[^0-9].*").matcher(line);
+                    //while(m.find()){
+                    //docIds.put(line,  new HashMap<>());
+                       // ints.add(Integer.parseInt(m.group()));
+                    //}
+                    /*  StringTokenizer st = new StringTokenizer(line,",");
+                     line.matches("\\D+");
+                     String word=st.nextToken();
+                     //Integer.parseInt(word)
+                     if(){
+                            
+                     }
+                     System.out.println(line);
+                     */
                 }
-                System.out.println(line);
 
             }
+
+//        System.out.println(table);
         }
-
-        System.out.println(table);
-
     }
-
 }
+
+
+// StringTokenizer st = new StringTokenizer(line, ",");
+//
+//                    while (st.hasMoreElements()) {
+//                        String i = st.nextToken();
+//
+//                        System.out.println(i);
+//                    }
