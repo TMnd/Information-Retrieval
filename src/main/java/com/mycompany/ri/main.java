@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,43 +48,51 @@ public class main {
             while ((line = bufferedReader.readLine()) != null) {
 
                 if (!line.startsWith("@")) {
-                   //System.out.println(line.trim().split("\"")[0]);
-                    String[] namesList = line.split("\"");
-                    for(String x:namesList ){
-                        if(x.endsWith(",")){
-                           System.out.println(x); 
-                        }
-                        
+                    Pattern pattern = Pattern.compile("\\\"([^\\\"]*)\\\"");
+                    Matcher matcher = pattern.matcher(line);
+                    LinkedList<String> list = new LinkedList<String>();
+
+                    // Loop through and find all matches and store them into the List
+                    while (matcher.find()) {
+                        list.add(matcher.group());
                     }
-                    
-                    
-                   
 
-                   
-
-                    //Matcher m = Pattern.compile(".*[^0-9].*").matcher(line);
-                    //while(m.find()){
-                    //docIds.put(line,  new HashMap<>());
-                       // ints.add(Integer.parseInt(m.group()));
-                    //}
-                    /*  StringTokenizer st = new StringTokenizer(line,",");
-                     line.matches("\\D+");
-                     String word=st.nextToken();
-                     //Integer.parseInt(word)
-                     if(){
-                            
-                     }
-                     System.out.println(line);
-                     */
+                    // Print out the contents of this List
+                    for (String match : list) {
+                        System.out.println(match);
+                    }
                 }
+               // String[] namesList = line.split("\"");
+                //System.out.println(line);
 
+//                    for(String x:namesList ){
+//                        if(x.endsWith(",")){
+//                           System.out.println(x); 
+//                        }
+//                        
+//                    }
+//                    
+                //Matcher m = Pattern.compile(".*[^0-9].*").matcher(line);
+                //while(m.find()){
+                //docIds.put(line,  new HashMap<>());
+                // ints.add(Integer.parseInt(m.group()));
+                //}
+                    /*  StringTokenizer st = new StringTokenizer(line,",");
+                 line.matches("\\D+");
+                 String word=st.nextToken();
+                 //Integer.parseInt(word)
+                 if(){
+                            
+                 }
+                 System.out.println(line);
+                 */
             }
 
-//        System.out.println(table);
         }
+
+//        System.out.println(table);
     }
 }
-
 
 // StringTokenizer st = new StringTokenizer(line, ",");
 //
@@ -92,3 +101,4 @@ public class main {
 //
 //                        System.out.println(i);
 //                    }
+
