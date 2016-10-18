@@ -5,8 +5,10 @@
  */
 package com.mycompany.ri;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -17,6 +19,7 @@ import java.util.zip.ZipFile;
  * @author joaoa
  */
 public class main {
+
     /**
      * @param args the command line arguments
      */
@@ -27,20 +30,30 @@ public class main {
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-        while(entries.hasMoreElements()){
+        while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
             InputStream stream = zipFile.getInputStream(entry);
             table.put(entries.nextElement(), new HashMap<>());
-            //System.out.println(entries.nextElement().toString()); 
+            //System.out.println(stream);
+            // BufferedInputStream reader = new BufferedInputStream(stream);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)));
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                char[] k = line.toCharArray();
+                for (int i = 0; i < k.length; i++) {
+                    if (!(k[0] == '@')) {
+                        break;
+                        //
+                    }
+                }
+                System.out.println(line);
+
+            }
         }
+
         System.out.println(table);
-        
-        
-        
-        
-    
-               
-                
+
     }
-    
+
 }
