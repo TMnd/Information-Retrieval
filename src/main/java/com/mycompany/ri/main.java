@@ -30,68 +30,94 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        // TODO code application logic here
         HashMap<ZipEntry, HashMap<String, String>> table = new HashMap<>();
-        HashMap<String, List<String>> rabodeboi = new HashMap<>();
+        HashMap<String, HashSet<String>> rabodeboi = new HashMap<>(); //Uso so HashSet em vez do ArrayList foi devido que o hashset nao insere duplicados.
         /* MUDAME A PUTA DA VARIAVEL */
         //ZipFile zipFile = new ZipFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\Mestrado\\RI\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
-        ZipFile zipFile = new ZipFile("D:\\Dropbox\\MEI\\RI\\RI\\src\\main\\java\\com\\mycompany\\ri\\AA_pmids_tagged.zip");
+        ZipFile zipFile = new ZipFile("D:\\Dropbox\\MEI\\RI\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
 
-        List<String> ids = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\\"([^\\\"]*)\\\""); //Para ler os conteudos dentro das " "
+        
+        Enumeration<? extends ZipEntry> entries = zipFile.entries(); //Para ler ficheiros zipados
 
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
+        //Para ler cada ficheiro dentro do ficheiro zipado
         while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
-            // InputStream stream = zipFile.getInputStream(entry);
-            //table.put(entries.nextElement(), new HashMap<>());
-            //System.out.println(stream);
-            // BufferedInputStream reader = new BufferedInputStream(stream);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)));
 
             String line;
-            while ((line = bufferedReader.readLine()) != null) {
-
-                if (!line.startsWith("@")) {
-                    Pattern pattern = Pattern.compile("\\\"([^\\\"]*)\\\"");
-                    Matcher matcher = pattern.matcher(line);
-                    //LinkedList<String> list = new LinkedList<String>();
-
-                    if (line.length() != 0) {
-                        //GET IDS
-                        String[] ids_aux = line.split(",");
-                        //System.out.println(namesList[0]);
-                        ids.add(new String(ids_aux[0]));
-                    }
-                    //GET TEXT
+            
+            //Primeira passagem pelos ficheiros
+            while ((line = bufferedReader.readLine()) != null) { 
+                String[] id_aux = null;
+                Matcher matcher = pattern.matcher(line); //Para activar o regex
+        
+                HashSet<String> idsLixo = new HashSet<>(); //Para dar valores nulos para cada key da hashmap
+                
+                if (!line.startsWith("@")) { //ler todas as linhas que nao tenham um @
+                    //GET text que se enzntra no meio das ""
                     while (matcher.find()) {
-                        //list.add(matcher.group());
-
-                        StringTokenizer st = new StringTokenizer(matcher.group(1), " ");
-
+                        
+                        StringTokenizer st = new StringTokenizer(matcher.group(1));  //Separa cada palavra pelo espaço
+                
                         while (st.hasMoreElements()) {
                             String i = st.nextToken();
-                            // Matcher matcher2 = pattern.matcher(i);
-
-                            //while (matcher2.find()) {
-                            if (!rabodeboi.containsKey(i)) {
-                                rabodeboi.put(i, ids);
+                            //System.out.println(i);
+                            //Encher a has map SÓ com os termos mas com nenhum value por key
+                            if (rabodeboi.get(i) == null || !rabodeboi.containsKey(i)) {
+                                rabodeboi.put(i, new HashSet<String>());
                             }
-                            //}
                         }
-
                     }
-
                 }
             }
+            
+            //Segunda passagem pelos ficheiros (TENTAR FAZER ISTO TUDO NUMA PASSAGEM)
+            BufferedReader bufferedReader2 = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)));
+            String line2;
+            while ((line2 = bufferedReader2.readLine()) != null) {
+                String ID = null;
+                Matcher matcher = pattern.matcher(line2);
+                HashSet<String> idsLista = new HashSet<>(); //é para inserir os valores dos ids para colocar nos values por key
+                String[] id_aux2 = null;
+                if (!line2.startsWith("@")) { //ler todas as linhas que nao tenham um @
+                    if (line2.length() != 0) { //let todas as linha que nao estejam vazias
+                        //GET IDS no inicio de cada linha
+                        id_aux2 = line2.split(",");
+                        ID = id_aux2[0];
+                    }
+                    //GET text que se enzntra no meio das ""
+                    while (matcher.find()) {
+                        
+                        StringTokenizer st = new StringTokenizer(matcher.group(1));  //Separa cada palavra pelo espaço
 
-            /*TESTE*/
-            for (Map.Entry<String, List<String>> entrySet : rabodeboi.entrySet()) {
-                String key = entrySet.getKey();
-                System.out.println(key + ": " + rabodeboi.get(key));
+                        while (st.hasMoreElements()) {
+                            
+                            String i = st.nextToken();
+                            
+                            //Encher a hashmap SÓ com os termos mas com nhum value por key
+                            if (rabodeboi.containsKey(i)){ //Insere só se a key do termo existir
+                                if(!idsLista.contains(ID) ){ //Insere só o hashset nao conter nada
+                                    rabodeboi.get(i).add(ID); //Inserir na hashmap de key i (.get(i)) 
+                                }
+                            }
+                        }
+                    }
+                }
+                /*for(int i=0; i<idsLista.size();i++){
+                    System.out.print(idsLista.get(i) + " ");
+                }*/
             }
-
-            /*arralist*/
+        }
+        /*TESTE*/
+        for (Map.Entry<String, HashSet<String>> entrySet : rabodeboi.entrySet()) {
+            String key = entrySet.getKey();
+            System.out.println(key + ": " + rabodeboi.get(key));
+        }
+//        System.out.println(table);
+    }
+}
+  /*arralist*/
  /* for(int i=0; i<ids.size(); i++){
                 System.out.println(ids.get(i));
             }*/
@@ -127,8 +153,3 @@ public class main {
                  }
                  System.out.println(line);
              */
-        }
-
-//        System.out.println(table);
-    }
-}
