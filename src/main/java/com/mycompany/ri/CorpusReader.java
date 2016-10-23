@@ -5,6 +5,9 @@
  */
 package com.mycompany.ri;
 
+import java.util.HashMap;
+import java.util.zip.ZipEntry;
+
 /**
  *
  * @author joaoa
@@ -12,6 +15,9 @@ package com.mycompany.ri;
 public class CorpusReader {
     String file;
     DocProcessor dp = new DocProcessor();
+    
+    private HashMap<ZipEntry, HashMap<String, String>> path = new HashMap<>();
+    private HashMap<String, HashMap<String, String>> conteudo = new HashMap<>();
     
     public CorpusReader() {
         this.file = file;

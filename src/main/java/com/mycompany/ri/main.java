@@ -30,18 +30,34 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        HashMap<ZipEntry, HashMap<String, String>> table = new HashMap<>();
-        HashMap<String, HashSet<String>> rabodeboi = new HashMap<>(); //Uso so HashSet em vez do ArrayList foi devido que o hashset nao insere duplicados.
+      //  HashMap<ZipEntry, HashMap<String, String>> table = new HashMap<>();
+       // HashMap<String, HashSet<String>> rabodeboi = new HashMap<>(); //Uso so HashSet em vez do ArrayList foi devido que o hashset nao insere duplicados.
         /* MUDAME A PUTA DA VARIAVEL */
+        
+        
+        System.out.println("Insira o ficheiro: (ja se encontra pre-defenido)");
+        //Para a Mafalda
         //ZipFile zipFile = new ZipFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\Mestrado\\RI\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
+        //Para mim
         ZipFile zipFile = new ZipFile("D:\\Dropbox\\MEI\\RI\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
 
-        Pattern pattern = Pattern.compile("\\\"([^\\\"]*)\\\""); //Para ler os conteudos dentro das " "
+       
         
-        Enumeration<? extends ZipEntry> entries = zipFile.entries(); //Para ler ficheiros zipados
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        /*Pattern pattern = Pattern.compile("\\\"([^\\\"]*)\\\""); //Para ler os conteudos dentro das " "
+        
+        Enumeration<? extends ZipEntry> entries = zipFile.entries(); //Para ler ficheiros zipados*/
 
         //Para ler cada ficheiro dentro do ficheiro zipado
-        while (entries.hasMoreElements()) {
+      /*  while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)));
 
@@ -104,16 +120,14 @@ public class main {
                         }
                     }
                 }
-                /*for(int i=0; i<idsLista.size();i++){
-                    System.out.print(idsLista.get(i) + " ");
-                }*/
+                
             }
-        }
+        }*/
         /*TESTE*/
-        for (Map.Entry<String, HashSet<String>> entrySet : rabodeboi.entrySet()) {
+       /* for (Map.Entry<String, HashSet<String>> entrySet : rabodeboi.entrySet()) {
             String key = entrySet.getKey();
             System.out.println(key + ": " + rabodeboi.get(key));
-        }
+        }*/
 //        System.out.println(table);
     }
 }
