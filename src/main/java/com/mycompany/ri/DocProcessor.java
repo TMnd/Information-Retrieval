@@ -36,6 +36,7 @@ public class DocProcessor {
                 toTokeneizer.add(rebuildString);// Insere na arraylist a string com o id do documento com o formato correcto e o conteudo do mesmo já tratado
             }                    
         }
+        System.out.println("DocProcessor: Processou a string");
     }
     
     //Serve para que a class tokeneizer consiga adquirir a arraylist da class DocProcessor para que possa trabalhar.

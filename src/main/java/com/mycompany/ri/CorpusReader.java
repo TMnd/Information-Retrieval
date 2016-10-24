@@ -49,6 +49,7 @@ public class CorpusReader {
                 }
             }
         }
+        System.out.println("CorpusReader: Leu o zip todo");
     }
 
     //Serve para adquirir o arraylist quando se é chamado por outra class
