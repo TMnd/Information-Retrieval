@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import org.tartarus.snowball.ext.englishStemmer;
+import org.tartarus.snowball.SnowballStemmer;
+
 
 public class Tokeneizer {
     //private int lengthToken;
@@ -30,7 +33,7 @@ public class Tokeneizer {
     
     
     //Load das stopwords para um hashset (reason: LUDACRIS SPEED)
-    public HashSet<String> loadStoppingwords() throws FileNotFoundException, IOException {
+    public void loadStoppingwords() throws FileNotFoundException, IOException {
         
         String StopWords="src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt";
         System.out.println("A dar load das stoppingwords");
@@ -41,7 +44,7 @@ public class Tokeneizer {
         while ((sCurrentLine = br.readLine()) != null) { //Percorre o ficheiro linha a linha 
             StopWord.add(sCurrentLine); //Adciona cada linha a um hashset
         }
-        return StopWord;
+        //return StopWord;
 
     }
 
@@ -52,7 +55,7 @@ public class Tokeneizer {
     
 
     public void FromDocProcessor(ArrayList<String> array) throws IOException{
-        //loadStoppingwords(); //Preenche o hashset primeiro antes desta função correr para nao criar problemas. Podia-se começar no principio do programa mas devido ao uso de arraylist no principio penso que esta seja a melhor opção
+        loadStoppingwords(); //Preenche o hashset primeiro antes desta função correr para nao criar problemas. Podia-se começar no principio do programa mas devido ao uso de arraylist no principio penso que esta seja a melhor opção
         //Percorrer o arraly list
         Iterator iter = array.iterator();
         System.out.println("Preencher a hashmap a imprimir");
@@ -74,7 +77,7 @@ public class Tokeneizer {
                 //in.setHi(i, ID); //Inser o valor de da token mas o id correspondte na hashmap que se encontra na class do indexer
                 if(!StopWord.contains(i)){
                   //  frequencia++;
-                    in.setHi(i,1,ID);
+                    in.setHi(i.toLowerCase(),1,ID);
                 }
             }
             //Quando o arraylist nao tiver mais elementos, o indexer imprime o que tem em memoria
@@ -104,6 +107,17 @@ public class Tokeneizer {
     }*/
     
     public String stemming(){
+        
+        //englishStemmer stemmer = new englishStemmer();
+        SnowballStemmer snowballStemmer = new englishStemmer();
+        /*for (String word : array) {
+            snowballStemmer.setCurrent(word);
+            snowballStemmer.stem();
+            sw.add(snowballStemmer.getCurrent());
+        }
+        System.out.println(sw);*/
+        
+        
         return null;
     }
     
