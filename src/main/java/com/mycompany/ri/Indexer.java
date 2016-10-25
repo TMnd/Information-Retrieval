@@ -19,7 +19,7 @@ public class Indexer {
     HashMap<Integer, Integer> hashFrequencia = new HashMap<Integer, Integer>();
     HashMap<Integer, String> hashIdDoc = new HashMap<Integer, String>();*/
     
-    private HashMap<String,HashMap<Integer, HashSet<String>>> hi= new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
+   // private HashMap<String,HashMap<Integer, HashSet<String>>> hi= new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
     private HashMap<String,HashMap<Integer, HashSet<String>>> hi2 = new HashMap<String,HashMap<Integer, HashSet<String>>>();
   //  private HashMap<String,HashMap<Integer,HashSet<String>>> hi= new HashMap<String,HashMap<Integer,HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
       
@@ -32,6 +32,7 @@ public class Indexer {
 
     public void setHi(String key,int frequencia, String DocId) {
         //HashSet<String> idsLista = new HashSet<>();
+        
         if (hi2.get(key) == null || !hi2.containsKey(key)) { //caso a hashmap nao tiver o valor inserido na key (talvez nao seja preciso o hi.get(key) == null)
             hi2.put(key, new HashMap<Integer, HashSet<String>>());
             hi2.get(key).put(frequencia, new HashSet<String>());

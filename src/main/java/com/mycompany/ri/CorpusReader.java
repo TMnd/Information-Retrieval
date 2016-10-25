@@ -21,19 +21,19 @@ public class CorpusReader {
      private HashMap<String, HashMap<String, Float>> docID = new HashMap<>();
      private HashMap<String, HashSet<String>> textMap = new HashMap<>();*/
 
-    public String AnaliseFile(String file) throws IOException {
+    public /*ArrayList<String>*/ void AnaliseFile(String file) throws IOException {
         DocProcessor dc = new DocProcessor();
 
         if (file.endsWith(".zip")) {
             System.out.println("CorpusReader: ENTROU NA FUNÇÃO ZIP");
 
-            return dc.readFileZip(file);
+            /*return */dc.readFileZip(file);
 
         } else {
             System.out.println("CorpusReader: NÃO ENTROU NA FUNÇÃO ZIP");
-
+            System.exit(0);
         }
-        return "Não entrou em nada";
+       // return "Não entrou em nada";
     }
 
     //Serve para adquirir o arraylist quando se é chamado por outra class

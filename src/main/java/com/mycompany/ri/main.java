@@ -22,16 +22,20 @@ public class main {
         DocProcessor dp = new DocProcessor();
         Tokeneizer to = new Tokeneizer();
         
-        Scanner sc = new Scanner(System.in);
+       /* Scanner sc = new Scanner(System.in);
         
         System.out.println("Inserir o caminho para o ficheiro:");
-        String insert = sc.nextLine();
+        String insert = sc.nextLine();*/
         
-        cp.AnaliseFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\RIIII\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
-       
-        dp.DivideLine(dp.getMenDocs2());
+        //Mafalda
+        //cp.AnaliseFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\RIIII\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
+        //Joao
+        cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
         
-        to.FromDocProcessor(dp.getMenDocs2());
+       // dp.DivideLine(dp.getMenDocs2());
+     //   System.out.println("getToTokeneizer(): " + dp.getToTokeneizer());
+        
+      //  to.FromDocProcessor(dp.getMenDocs2());
 
     }
 }

@@ -36,7 +36,7 @@ public class Tokeneizer {
     public void loadStoppingwords() throws FileNotFoundException, IOException {
         
         String StopWords="src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt";
-        System.out.println("A dar load das stoppingwords");
+
         FileReader f = new FileReader(StopWords); //ver o ficheiro que existe na source do programa
         BufferedReader br = new BufferedReader(f);
         String sCurrentLine;
@@ -55,10 +55,11 @@ public class Tokeneizer {
     
 
     public void FromDocProcessor(ArrayList<String> array) throws IOException{
+        System.out.println("A dar load das stoppingwords");
         loadStoppingwords(); //Preenche o hashset primeiro antes desta função correr para nao criar problemas. Podia-se começar no principio do programa mas devido ao uso de arraylist no principio penso que esta seja a melhor opção
         //Percorrer o arraly list
         Iterator iter = array.iterator();
-        System.out.println("Preencher a hashmap a imprimir");
+        System.out.println("Preencher a hashmap");
         while(iter.hasNext()){
             String ID = null;
             String line = (String) iter.next(); //cada linha do documento que foi inserido na arraylist
@@ -73,18 +74,16 @@ public class Tokeneizer {
             while(st.hasMoreElements()){
                // int frequencia = 0;
                 String i = st.nextToken(); //Torna cada token em string
-                
                 //in.setHi(i, ID); //Inser o valor de da token mas o id correspondte na hashmap que se encontra na class do indexer
                 if(!StopWord.contains(i)){
-                  //  frequencia++;
-                    in.setHi(i.toLowerCase(),1,ID);
+                    in.setHi(i,1,ID);
                 }
             }
             //Quando o arraylist nao tiver mais elementos, o indexer imprime o que tem em memoria
             //Esta parte serve exclusivamente para testes
            
             if(!iter.hasNext()){
-                System.out.println("A calucar a frequencia dos documentos em que o termo aparece");
+                System.out.println("A calucar a frequencia dos documentos");
                 in.updateDocFrequency();
                 System.out.println("A Imprimir");
                 in.imprimir();

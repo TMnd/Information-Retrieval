@@ -22,14 +22,14 @@ public class DocProcessor {
 
     Pattern pattern = Pattern.compile("\\\"([^\\\"]*)\\\""); //Padrão para o regex
 
-    private ArrayList<String> toTokeneizer = new ArrayList<String>(); //Arralist para que se possa guardar as strings completamente tratadas com regex e com o id e o nome do documento no sitio certo
-    private ArrayList<String> menDocs2 = new ArrayList<String>(); //O arraylist server para armazenar todas as linhas como strings ja modificadas de todas as linhas.
+    //private ArrayList<String> toTokeneizer = new ArrayList<String>(); //Arralist para que se possa guardar as strings completamente tratadas com regex e com o id e o nome do documento no sitio certo
+    ArrayList<String> menDocs2 = new ArrayList<String>(); //O arraylist server para armazenar todas as linhas como strings ja modificadas de todas as linhas.
     private String regex_inicial = "@";
 
-    public String readFileZip(String file) throws IOException {
+    public void readFileZip(String file) throws IOException {
 
         ZipFile zipFile = new ZipFile(file);
-
+        Tokeneizer to = new Tokeneizer();
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
         //Percorre todos os ficheiros do ficheiro zip
@@ -47,46 +47,49 @@ public class DocProcessor {
                 if (!line.startsWith(regex_inicial)) { //ler todas as linhas que nao tenham um @ (ISTO TEM DE SER MELHORADO)
 
                     if (line.length() != 0) { //let todas as linha que nao estejam vazias
-
-                        line_rebuild = ' ' + ficheiro + ',' + line + ' '; //String modificadora que acrescenta o nome do ficheiro antes do conteudo de cada linhas
-                        menDocs2.add(line_rebuild); //Acrscenta a linha modificada para o arraylist
-
+                       
+                        menDocs2.add(DivideLine(line, ficheiro));
                     }
                 }
             }
+            
 
         }
-        //System.out.println(menDocs2);
         System.out.println("CorpusReader: Leu o zip todo");
-        return null;
+        to.FromDocProcessor(menDocs2);
+       // return menDocs2;
     }
+
+
+
+    //Serve para dividir cada documento para poder ser tratado
+    public String DivideLine(String line, String ficheiro){
+
+            String rebuildString = null;
+            String[] teste = line.split(",",2); //separar a string no ',' mas só os dois primeiros
+            
+            
+            Matcher matcher = pattern.matcher(teste[1]); //Para activar o regex
+
+            while (matcher.find()) {
+                rebuildString = teste[0] + "_" + ficheiro + "," + matcher.group(1); //ex: idDoc_NomeDoFicheiro, TextoDoDoc
+              //  System.out.println(rebuildString);
+            }
+       
+        return rebuildString;
+    }
+    
+    
+    
+   /* public ArrayList<String> getToTokeneizer() {
+        return toTokeneizer;
+    }*/
 
     public ArrayList<String> getMenDocs2() {
         return menDocs2;
     }
-
-    //Serve para dividir cada documento para poder ser tratado
-    public void DivideLine(ArrayList<String> AllDocs) {
-        //Percorrer o arraly list
-        Iterator iter = AllDocs.iterator();
-        while (iter.hasNext()) {
-
-            String line = (String) iter.next(); //cada linha do documento que foi inserido na arraylist
-
-            String[] teste = line.split(",", 3); //separar a string no ',' mas só os dois primeiros
-
-            Matcher matcher = pattern.matcher(teste[2]); //Para activar o regex
-
-            while (matcher.find()) {
-                String rebuildString = teste[1] + "_" + teste[0] + "," + matcher.group(1); //ex: idDoc_NomeDoFicheiro, TextoDoDoc
-                toTokeneizer.add(rebuildString);// Insere na arraylist a string com o id do documento com o formato correcto e o conteudo do mesmo já tratado
-            }
-        }
-        System.out.println("DocProcessor: Processou a string");
-    }
-
 }
-
+    
 /*
  //Serve para que a class tokeneizer consiga adquirir a arraylist da class DocProcessor para que possa trabalhar.
  public ArrayList<String> getToTokeneizer() {
