@@ -6,6 +6,7 @@
 package com.mycompany.ri;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  *
@@ -20,9 +21,13 @@ public class main {
         CorpusReader cp = new CorpusReader();
         DocProcessor dp = new DocProcessor();
         Tokeneizer to = new Tokeneizer();
-        Indexer in = new Indexer();
         
-        cp.readToMemory();
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.println("Inserir o caminho para o ficheiro:");
+        String insert = sc.nextLine();
+        
+        cp.readToMemory(insert);
        
         dp.DivideLine(cp.getMenDocs());
         

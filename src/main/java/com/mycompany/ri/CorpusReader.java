@@ -22,11 +22,12 @@ public class CorpusReader {
     private HashMap<String, HashSet<String>> textMap = new HashMap<>();*/
     private ArrayList<String> menDocs2 = new ArrayList<String>(); //O arraylist server para armazenar todas as linhas como strings ja modificadas de todas as linhas.
     
-    public void readToMemory() throws IOException{
+    public void readToMemory(String insert) throws IOException{
         //Para a mafalda testar
         //ZipFile zipFile = new ZipFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\Mestrado\\RI\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
         //Para o joao testar
-        ZipFile zipFile = new ZipFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
+        //ZipFile zipFile = new ZipFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
+        ZipFile zipFile = new ZipFile(insert);//"D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
         
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
  

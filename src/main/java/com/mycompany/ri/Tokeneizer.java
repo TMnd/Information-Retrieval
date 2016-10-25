@@ -45,17 +45,21 @@ public class Tokeneizer {
             
             //Corre se a string tokeneizer tiver mais elementos
             while(st.hasMoreElements()){
+               // int frequencia = 0;
                 String i = st.nextToken(); //Torna cada token em string
                 
                 //in.setHi(i, ID); //Inser o valor de da token mas o id correspondte na hashmap que se encontra na class do indexer
                 if(!sw.contains(i)){
-                    in.setHi(i, ID);
+                  //  frequencia++;
+                    in.setHi(i,1,ID);
                 }
             }
             //Quando o arraylist nao tiver mais elementos, o indexer imprime o que tem em memoria
             //Esta parte serve exclusivamente para testes
            
             if(!iter.hasNext()){
+                System.out.println("A calucar a frequencia dos documentos em que o termo aparece");
+                in.updateDocFrequency();
                 System.out.println("A Imprimir");
                 in.imprimir();
             }
