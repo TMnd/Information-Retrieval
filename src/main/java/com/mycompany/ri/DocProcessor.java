@@ -19,11 +19,13 @@ import java.util.zip.ZipFile;
 
 
 public class DocProcessor {
-
+    
     Pattern pattern = Pattern.compile("\\\"([^\\\"]*)\\\""); //Padrão para o regex
 
     //private ArrayList<String> toTokeneizer = new ArrayList<String>(); //Arralist para que se possa guardar as strings completamente tratadas com regex e com o id e o nome do documento no sitio certo
     ArrayList<String> menDocs2 = new ArrayList<String>(); //O arraylist server para armazenar todas as linhas como strings ja modificadas de todas as linhas.
+    
+    
     private String regex_inicial = "@";
 
     public void readFileZip(String file) throws IOException {
@@ -40,7 +42,7 @@ public class DocProcessor {
 
             String line; //Para cada linha (documentos, id e o texto em si incluidos) que contém cada ficheiro 
             String ficheiro = entry.getName(); //Para adquirir o nome de cada ficheiro ex: se o ficheiro tiver uma pasta sera: NomeDaPasta/NomeDoFicheiro. se for só o ficheiro aparecera só o ficheiro
-            String line_rebuild = null; //Serve para reconstruir cada linha que sera inserida no arraylyst que ira acrescentar no principio o nome do ficheiro que esta a ser lido as linhas
+            //String line_rebuild = null; //Serve para reconstruir cada linha que sera inserida no arraylyst que ira acrescentar no principio o nome do ficheiro que esta a ser lido as linhas
 
             //Percorre todas as linhas de cada ficherio
             while ((line = bufferedReader.readLine()) != null) {
@@ -56,6 +58,9 @@ public class DocProcessor {
 
         }
         System.out.println("CorpusReader: Leu o zip todo");
+        
+        //to.stemming(menDocs2);
+        
         to.FromDocProcessor(menDocs2);
        // return menDocs2;
     }
@@ -90,34 +95,7 @@ public class DocProcessor {
     }
 }
     
-/*
- //Serve para que a class tokeneizer consiga adquirir a arraylist da class DocProcessor para que possa trabalhar.
- public ArrayList<String> getToTokeneizer() {
- return toTokeneizer;
- }
-    
- //dunno
- public HashMap<String, HashMap<String, Float>> putinTable(HashMap<String, HashMap<String, String>> conteudo) {
- return null;
- }
 
- public static void checkLanguage(String data) {
-
- }
-
- public static void checkCharacterSet(String data) {
-
- }
-
- public String getTexto(String data) {
- return texto;
- }
-
- public HashMap<String, HashMap<String, Float>> getHashMap() {
- return null;
- }
-    
- }
     
  /*Iterator iter = arrlist.iterator();
  while (iter.hasNext()) {

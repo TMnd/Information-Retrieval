@@ -24,12 +24,9 @@ public class Tokeneizer {
    // public StringTokenizer listTokens;
     Indexer in = new Indexer();
     private HashSet<String> StopWord = new HashSet<>();
-   // public String data; //recebido pelo docprocessor
-    //HashMap<String, HashSet<String>> hashFromIndexer = in.setHi(in.hi);
+
     
-    /*public void setData(String data) {
-        this.data = data;
-    }*/
+    
     
     
     //Load das stopwords para um hashset (reason: LUDACRIS SPEED)
@@ -57,13 +54,16 @@ public class Tokeneizer {
     public void FromDocProcessor(ArrayList<String> array) throws IOException{
         System.out.println("A dar load das stoppingwords");
         loadStoppingwords(); //Preenche o hashset primeiro antes desta função correr para nao criar problemas. Podia-se começar no principio do programa mas devido ao uso de arraylist no principio penso que esta seja a melhor opção
+        
+
+
         //Percorrer o arraly list
         Iterator iter = array.iterator();
         System.out.println("Preencher a hashmap");
         while(iter.hasNext()){
             String ID = null;
             String line = (String) iter.next(); //cada linha do documento que foi inserido na arraylist
-            HashSet<String> idsLista = new HashSet<>(); //é para inserir os valores dos ids para colocar nos values por key 
+            //HashSet<String> idsLista = new HashSet<>(); //é para inserir os valores dos ids para colocar nos values por key 
             String[] teste= line.split(",", 2); //Pra dividir os strings do arraylist pelo ','
             
             
@@ -76,6 +76,9 @@ public class Tokeneizer {
                 String i = st.nextToken(); //Torna cada token em string
                 //in.setHi(i, ID); //Inser o valor de da token mas o id correspondte na hashmap que se encontra na class do indexer
                 if(!StopWord.contains(i)){
+                    SnowballStemmer snowballStemmer = new englishStemmer();
+                    snowballStemmer.setCurrent(i);
+                    snowballStemmer.stem();
                     in.setHi(i,1,ID);
                 }
             }
@@ -105,19 +108,23 @@ public class Tokeneizer {
         return listTokens;
     }*/
     
-    public String stemming(){
-        
+    public void stemming(ArrayList<String> array){
+        Tokeneizer to = new Tokeneizer();
         //englishStemmer stemmer = new englishStemmer();
         SnowballStemmer snowballStemmer = new englishStemmer();
-        /*for (String word : array) {
+        for (String word : array) {
             snowballStemmer.setCurrent(word);
             snowballStemmer.stem();
-            sw.add(snowballStemmer.getCurrent());
+            word=snowballStemmer.getCurrent();
+            
+            //to.FromDocProcessor(snowballStemmer.getCurrent());
+            //sw.add(snowballStemmer.getCurrent());
         }
-        System.out.println(sw);*/
+        //to.FromDocProcessor(word);
+       
         
         
-        return null;
+       
     }
     
     public String parseText(String text) {

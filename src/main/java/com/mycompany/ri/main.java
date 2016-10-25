@@ -28,9 +28,9 @@ public class main {
         String insert = sc.nextLine();*/
         
         //Mafalda
-        //cp.AnaliseFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\RIIII\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
+        cp.AnaliseFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\RIIII\\RI\\src\\main\\java\\com\\mycompany\\ri\\sample_corpus.zip");
         //Joao
-        cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
+        //cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
         
        // dp.DivideLine(dp.getMenDocs2());
      //   System.out.println("getToTokeneizer(): " + dp.getToTokeneizer());
