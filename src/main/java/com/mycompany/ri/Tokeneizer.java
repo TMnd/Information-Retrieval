@@ -5,7 +5,6 @@
  */
 package com.mycompany.ri;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,21 +17,17 @@ import java.util.StringTokenizer;
 import org.tartarus.snowball.ext.englishStemmer;
 import org.tartarus.snowball.SnowballStemmer;
 
-
 public class Tokeneizer {
     //private int lengthToken;
-   // public StringTokenizer listTokens;
+    // public StringTokenizer listTokens;
+
     Indexer in = new Indexer();
     private HashSet<String> StopWord = new HashSet<>();
 
-    
-    
-    
-    
     //Load das stopwords para um hashset (reason: LUDACRIS SPEED)
     public void loadStoppingwords() throws FileNotFoundException, IOException {
-        
-        String StopWords="src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt";
+
+        String StopWords = "src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt";
 
         FileReader f = new FileReader(StopWords); //ver o ficheiro que existe na source do programa
         BufferedReader br = new BufferedReader(f);
@@ -48,44 +43,40 @@ public class Tokeneizer {
     public HashSet<String> getStopWord() {
         return StopWord;
     }
-    
-    
 
-    public void FromDocProcessor(ArrayList<String> array) throws IOException{
+    public void FromDocProcessor(ArrayList<String> array) throws IOException {
         System.out.println("A dar load das stoppingwords");
         loadStoppingwords(); //Preenche o hashset primeiro antes desta função correr para nao criar problemas. Podia-se começar no principio do programa mas devido ao uso de arraylist no principio penso que esta seja a melhor opção
-        
-
 
         //Percorrer o arraly list
         Iterator iter = array.iterator();
         System.out.println("Preencher a hashmap");
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             String ID = null;
             String line = (String) iter.next(); //cada linha do documento que foi inserido na arraylist
             //HashSet<String> idsLista = new HashSet<>(); //é para inserir os valores dos ids para colocar nos values por key 
-            String[] teste= line.split(",", 2); //Pra dividir os strings do arraylist pelo ','
-            
-            StringTokenizer st = new StringTokenizer (parseText(CheckSpecialCharacters(teste[1])));
+            String[] teste = line.split(",", 2); //Pra dividir os strings do arraylist pelo ','
+
+            StringTokenizer st = new StringTokenizer(parseText(CheckSpecialCharacters(teste[1])));
             //StringTokenizer st = new StringTokenizer(parseText(teste[1])); //Dividir por tokens o parte do documento
             ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
-            
+
             //Corre se a string tokeneizer tiver mais elementos
-            while(st.hasMoreElements()){
-               // int frequencia = 0;
+            while (st.hasMoreElements()) {
+                // int frequencia = 0;
                 String i = st.nextToken(); //Torna cada token em string
+                i.toLowerCase();
                 //in.setHi(i, ID); //Inser o valor de da token mas o id correspondte na hashmap que se encontra na class do indexer
-                if(!StopWord.contains(i)){
-                    SnowballStemmer snowballStemmer = new englishStemmer();
-                    snowballStemmer.setCurrent(i);
-                    snowballStemmer.stem();
-                    in.setHi(i,1,ID);
+                if (!StopWord.contains(i)) {
+                    String qql=stemming(i);
+
+                    in.setHi(qql, 1, ID);
                 }
             }
             //Quando o arraylist nao tiver mais elementos, o indexer imprime o que tem em memoria
             //Esta parte serve exclusivamente para testes
-           
-            if(!iter.hasNext()){
+
+            if (!iter.hasNext()) {
                 System.out.println("A calucar a frequencia dos documentos");
                 in.updateDocFrequency();
                 System.out.println("A Imprimir");
@@ -93,40 +84,36 @@ public class Tokeneizer {
             }
         }
     }
-    
 
-    
-   /* public boolean stoppingWords(String word) throws FileNotFoundException, IOException{
+    /* public boolean stoppingWords(String word) throws FileNotFoundException, IOException{
         
-        if(sw.contains(word))
+     if(sw.contains(word))
      
-    }*/
-        
-    
+     }*/
     //Dunno
     /*public StringTokenizer divideText(String data){
-        return listTokens;
-    }*/
-    
-    public void stemming(ArrayList<String> array){
-        Tokeneizer to = new Tokeneizer();
+     return listTokens;
+     }*/
+    public String stemming(String word) {
+       
         //englishStemmer stemmer = new englishStemmer();
         SnowballStemmer snowballStemmer = new englishStemmer();
-        for (String word : array) {
-            snowballStemmer.setCurrent(word);
-            snowballStemmer.stem();
-            word=snowballStemmer.getCurrent();
-            
-            //to.FromDocProcessor(snowballStemmer.getCurrent());
-            //sw.add(snowballStemmer.getCurrent());
-        }
-        //to.FromDocProcessor(word);
-       
+ 
+        snowballStemmer.setCurrent(word);
 
-       
+        snowballStemmer.stem();
+        System.out.println();
+        
+        return snowballStemmer.getCurrent();
+
+            //to.FromDocProcessor(snowballStemmer.getCurrent());
+        //sw.add(snowballStemmer.getCurrent());
     }
-    
-    public String parseText(String text) {
+        //to.FromDocProcessor(word);
+
+
+
+public String parseText(String text) {
         return text.replaceAll("[^\\p{L}\\p{Z}]", "").replaceAll(" +", " ");
     }
     
