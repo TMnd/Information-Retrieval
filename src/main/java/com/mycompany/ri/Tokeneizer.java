@@ -20,7 +20,7 @@ public class Tokeneizer {
     //private int lengthToken;
    // public StringTokenizer listTokens;
     Indexer in = new Indexer();
-    private HashSet<String> sw = new HashSet<>();
+    private HashSet<String> StopWord = new HashSet<>();
    // public String data; //recebido pelo docprocessor
     //HashMap<String, HashSet<String>> hashFromIndexer = in.setHi(in.hi);
     
@@ -28,8 +28,31 @@ public class Tokeneizer {
         this.data = data;
     }*/
     
+    
+    //Load das stopwords para um hashset (reason: LUDACRIS SPEED)
+    public HashSet<String> loadStoppingwords() throws FileNotFoundException, IOException {
+        
+        String StopWords="src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt";
+        System.out.println("A dar load das stoppingwords");
+        FileReader f = new FileReader(StopWords); //ver o ficheiro que existe na source do programa
+        BufferedReader br = new BufferedReader(f);
+        String sCurrentLine;
+
+        while ((sCurrentLine = br.readLine()) != null) { //Percorre o ficheiro linha a linha 
+            StopWord.add(sCurrentLine); //Adciona cada linha a um hashset
+        }
+        return StopWord;
+
+    }
+
+    public HashSet<String> getStopWord() {
+        return StopWord;
+    }
+    
+    
+
     public void FromDocProcessor(ArrayList<String> array) throws IOException{
-        loadStoppingwords(); //Preenche o hashset primeiro antes desta função correr para nao criar problemas. Podia-se começar no principio do programa mas devido ao uso de arraylist no principio penso que esta seja a melhor opção
+        //loadStoppingwords(); //Preenche o hashset primeiro antes desta função correr para nao criar problemas. Podia-se começar no principio do programa mas devido ao uso de arraylist no principio penso que esta seja a melhor opção
         //Percorrer o arraly list
         Iterator iter = array.iterator();
         System.out.println("Preencher a hashmap a imprimir");
@@ -49,7 +72,7 @@ public class Tokeneizer {
                 String i = st.nextToken(); //Torna cada token em string
                 
                 //in.setHi(i, ID); //Inser o valor de da token mas o id correspondte na hashmap que se encontra na class do indexer
-                if(!sw.contains(i)){
+                if(!StopWord.contains(i)){
                   //  frequencia++;
                     in.setHi(i,1,ID);
                 }
@@ -66,17 +89,7 @@ public class Tokeneizer {
         }
     }
     
-    //Load das stopwords para um hashset (reason: LUDACRIS SPEED)
-    public void loadStoppingwords() throws FileNotFoundException, IOException{
-        System.out.println("A dar load das stoppingwords");
-        FileReader f = new FileReader("src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt"); //ver o ficheiro que existe na source do programa
-        BufferedReader br = new BufferedReader(f);;
-	String sCurrentLine;
 
-        while ((sCurrentLine = br.readLine()) != null) { //Percorre o ficheiro linha a linha 
-            sw.add(sCurrentLine); //Adciona cada linha a um hashset
-	}
-    }
     
    /* public boolean stoppingWords(String word) throws FileNotFoundException, IOException{
         

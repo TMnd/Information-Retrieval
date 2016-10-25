@@ -27,11 +27,11 @@ public class main {
         System.out.println("Inserir o caminho para o ficheiro:");
         String insert = sc.nextLine();
         
-        cp.readToMemory(insert);
+        cp.AnaliseFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\RIIII\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
        
-        dp.DivideLine(cp.getMenDocs());
+        dp.DivideLine(dp.getMenDocs2());
         
-        to.FromDocProcessor(dp.getToTokeneizer());
+        to.FromDocProcessor(dp.getMenDocs2());
 
     }
 }
