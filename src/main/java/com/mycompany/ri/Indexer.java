@@ -72,7 +72,7 @@ public class Indexer {
         for(Map.Entry<String,HashMap<Integer, HashSet<String>>> entrySet : hi2.entrySet()) {
         //for(Map.Entry<String, HashMap<Integer,String>> entrySet : hi.entrySet()) {
             String key = entrySet.getKey();
-            //System.out.println(key + ": " + hi2.get(key));
+            System.out.println(key + ": " + hi2.get(key));
         }
     }
     

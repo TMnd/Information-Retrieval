@@ -66,8 +66,8 @@ public class Tokeneizer {
             //HashSet<String> idsLista = new HashSet<>(); //é para inserir os valores dos ids para colocar nos values por key 
             String[] teste= line.split(",", 2); //Pra dividir os strings do arraylist pelo ','
             
-            
-            StringTokenizer st = new StringTokenizer(parseText(teste[1])); //Dividir por tokens o parte do documento
+            StringTokenizer st = new StringTokenizer (parseText(CheckSpecialCharacters(teste[1])));
+            //StringTokenizer st = new StringTokenizer(parseText(teste[1])); //Dividir por tokens o parte do documento
             ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
             
             //Corre se a string tokeneizer tiver mais elementos
@@ -79,7 +79,7 @@ public class Tokeneizer {
                     SnowballStemmer snowballStemmer = new englishStemmer();
                     snowballStemmer.setCurrent(i);
                     snowballStemmer.stem();
-                    in.setHi(i.toLowerCase(),1,ID);
+                    in.setHi(i,1,ID);
                 }
             }
             //Quando o arraylist nao tiver mais elementos, o indexer imprime o que tem em memoria
@@ -122,8 +122,7 @@ public class Tokeneizer {
         }
         //to.FromDocProcessor(word);
        
-        
-        
+
        
     }
     
@@ -135,8 +134,8 @@ public class Tokeneizer {
         return null;
     }
     
-    public String CheckSpecialCharacters(){
-        return null;
+    public String CheckSpecialCharacters(String text){
+        return text.replaceAll("<\\w>|<.\\w>", "").replaceAll(" +", " ");
     }
     
     public String lowercase(){
