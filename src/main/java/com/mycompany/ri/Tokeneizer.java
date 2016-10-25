@@ -79,7 +79,7 @@ public class Tokeneizer {
                     SnowballStemmer snowballStemmer = new englishStemmer();
                     snowballStemmer.setCurrent(i);
                     snowballStemmer.stem();
-                    in.setHi(i,1,ID);
+                    in.setHi(i.toLowerCase(),1,ID);
                 }
             }
             //Quando o arraylist nao tiver mais elementos, o indexer imprime o que tem em memoria
