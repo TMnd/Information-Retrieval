@@ -67,7 +67,7 @@ public class Tokeneizer {
             String[] teste= line.split(",", 2); //Pra dividir os strings do arraylist pelo ','
             
             
-            StringTokenizer st = new StringTokenizer(teste[1]); //Dividir por tokens o parte do documento
+            StringTokenizer st = new StringTokenizer(parseText(teste[1])); //Dividir por tokens o parte do documento
             ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
             
             //Corre se a string tokeneizer tiver mais elementos
@@ -118,6 +118,10 @@ public class Tokeneizer {
         
         
         return null;
+    }
+    
+    public String parseText(String text) {
+        return text.replaceAll("[^\\p{L}\\p{Z}]", "").replaceAll(" +", " ");
     }
     
     public String lemmatization(){
