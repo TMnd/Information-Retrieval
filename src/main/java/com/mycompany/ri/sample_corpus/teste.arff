@@ -1,0 +1,10 @@
+@RELATION C0001898_C0002563_C0051405
+
+@ATTRIBUTE PMID integer
+@ATTRIBUTE citation string
+@ATTRIBUTE class {M1, M2, M3}
+
+@DATA
+20404340,"cats lakes wiis supplies ups",M1
+21321321,"cement replacement dictionaries guesses conventional ",M1
+

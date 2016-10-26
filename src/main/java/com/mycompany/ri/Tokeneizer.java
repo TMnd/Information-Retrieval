@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.ri;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,112 +11,168 @@ import java.util.StringTokenizer;
 import org.tartarus.snowball.ext.englishStemmer;
 import org.tartarus.snowball.SnowballStemmer;
 
+/**
+ * @author  João Amaral
+ * @author  Mafalda Rofrigues
+ */
 public class Tokeneizer {
-    //private int lengthToken;
-    // public StringTokenizer listTokens;
-
     Indexer in = new Indexer();
+  
+    //Para guardar as StopWord que se encontram num ficheiro para um hashset
     private HashSet<String> StopWord = new HashSet<>();
 
-    //Load das stopwords para um hashset (reason: LUDACRIS SPEED)
+    /**
+     * Como existe um ficheiro no porjecto com as stopwords entao esta função
+     * lê o ficheiro linha a linha e vai adcionando para o hashSet "StopWord"
+     * as palavras.
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public void loadStoppingwords() throws FileNotFoundException, IOException {
-
+        //Carregar o ficheiro que contém as stopwords
         String StopWords = "src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt";
-
-        FileReader f = new FileReader(StopWords); //ver o ficheiro que existe na source do programa
+        
+        //ler o ficheiro txt
+        FileReader f = new FileReader(StopWords); 
         BufferedReader br = new BufferedReader(f);
+        
         String sCurrentLine;
 
-        while ((sCurrentLine = br.readLine()) != null) { //Percorre o ficheiro linha a linha 
-            StopWord.add(sCurrentLine); //Adciona cada linha a um hashset
+        //Percorre o ficheiro linha a linha 
+        while ((sCurrentLine = br.readLine()) != null) { 
+            //Adciona cada linha para o hashset
+            StopWord.add(sCurrentLine); 
         }
-        //return StopWord;
-
     }
 
-    public HashSet<String> getStopWord() {
-        return StopWord;
-    }
-
+    /**
+     * As menssagens no meio do codigo têm o objectivo de informar ao utilizador
+     * a etapa que se encontra durante a execução do programa.
+     * Esta função recebe como parametro o arraylist (que é preenchido no DocProcessor
+     * Antes de fazer alguma coisa o metodo "loadStoppingWords()" é percorrido.
+     * Uma vez com as spotwords em memoria, o arraylist é lido para ser processado.
+     * Cada elemento do arraylist contém o id do documento mais o documento que
+     * serão divididos para que possam ser inseridos na hashmap(Indexer).
+     * Agora falando o conteudo do documento. Cada documento irá passar por dois 
+     * metodos que irão retirar retirar os caracteres especiais e tags. Uma vez
+     * com os documentos tratados, estes são divididos em varios tokens.
+     * Cada Token é colocado em letras pequenas e irá passar pelo stemmer que o
+     * resultado que for recebido pelo metodo "stemming" irá ser adcionado em 
+     * em conjunto com o docid correspondente na hashmap no indexer.
+     * Uma vez que o ultimo elemento é lido é chamado o metodo updateDocFrequency()
+     * que existe no indexer.
+     * 
+     * @param array
+     * @throws IOException
+     */
     public void FromDocProcessor(ArrayList<String> array) throws IOException {
-        System.out.println("A dar load das stoppingwords");
-        loadStoppingwords(); //Preenche o hashset primeiro antes desta função correr para nao criar problemas. Podia-se começar no principio do programa mas devido ao uso de arraylist no principio penso que esta seja a melhor opção
-
+        System.out.println("Tokeneizer: A dar load das stoppingwords");
+        
+        //Preenche o hashset primeiro antes desta função correr para nao criar problemas. 
+        //Podia-se começar no principio do programa mas devido ao uso de arraylist no principio
+        //penso que esta seja a melhor opção
+        loadStoppingwords(); 
+ 
         //Percorrer o arraly list
-        Iterator iter = array.iterator();
-        System.out.println("Preencher a hashmap");
-        while (iter.hasNext()) {
+        Iterator leitorArray = array.iterator();
+        System.out.println("Tokeneizer: Preencher a hashmap");
+        while (leitorArray.hasNext()) {
             String ID = null;
-            String line = (String) iter.next(); //cada linha do documento que foi inserido na arraylist
-            //HashSet<String> idsLista = new HashSet<>(); //é para inserir os valores dos ids para colocar nos values por key 
-            String[] teste = line.split(",", 2); //Pra dividir os strings do arraylist pelo ','
-
-            StringTokenizer st = new StringTokenizer(parseText(CheckSpecialCharacters(teste[1])));
-            //StringTokenizer st = new StringTokenizer(parseText(teste[1])); //Dividir por tokens o parte do documento
-            ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
+            
+            String line = (String) leitorArray.next(); 
+            //Pra dividir os strings do arraylist pelo ',' 
+            // teste[0] = docId + nomeDoFicheiro
+            // tesste[1] = documento
+            String[] teste = line.split(",", 2); 
+            
+            //Dividir por tokens o parte do documento
+            StringTokenizer st = new StringTokenizer(parseText(CheckSpecialCharacters(teste[1]))); 
+            
+            //Para guardar em variavel o id do doc para que possa ser usado depois
+            ID = teste[0]; 
 
             //Corre se a string tokeneizer tiver mais elementos
             while (st.hasMoreElements()) {
-                // int frequencia = 0;
-                String i = st.nextToken(); //Torna cada token em string
-                i.toLowerCase();
-                //in.setHi(i, ID); //Inser o valor de da token mas o id correspondte na hashmap que se encontra na class do indexer
+                //Torna cada token em string
+                String i = st.nextToken();
+                //Mete todos os caracteres da string em letras pequenas
+                i = i.toLowerCase();
+                
+                //Verifica se o token é uma stopword ou não
                 if (!StopWord.contains(i)) {
+                    //Insere a string que nao é uma stopword no stemmer
                     String qql=stemming(i);
-
-                    in.setHi(qql, 1, ID);
+                    
+                    //Insere a string que foi recebida pelo stemmer e o id 
+                    //do decumento na hashmap que se encontra na class indexer
+                    in.setHM(qql, ID);
                 }
             }
-            //Quando o arraylist nao tiver mais elementos, o indexer imprime o que tem em memoria
-            //Esta parte serve exclusivamente para testes
-
-            if (!iter.hasNext()) {
-                System.out.println("A calucar a frequencia dos documentos");
+            //Esta condição irá correr sempre que o iterator chegar ao ultimo
+            //valor do array
+            if (!leitorArray.hasNext()) {
+                System.out.println("Tokeneizer: A calucar a frequencia dos documentos");
+                //Uma vez com a hashmap do indexer preenchida este metodo irá
+                //calcular a frequencia dos documentos para cada termo
                 in.updateDocFrequency();
                 System.out.println("A Imprimir");
-                in.imprimir();
+                //Imprime a hashmap do indexer, para testes
+                //in.imprimir();
+                in.saveDisc();
             }
         }
     }
 
-    /* public boolean stoppingWords(String word) throws FileNotFoundException, IOException{
-        
-     if(sw.contains(word))
-     
-     }*/
-    //Dunno
-    /*public StringTokenizer divideText(String data){
-     return listTokens;
-     }*/
+    /**
+     * Tratamento de palavras usando a biblioteca SnowballStemmer
+     *
+     * @param word
+     * @return
+     */
     public String stemming(String word) {
        
-        //englishStemmer stemmer = new englishStemmer();
         SnowballStemmer snowballStemmer = new englishStemmer();
  
         snowballStemmer.setCurrent(word);
 
         snowballStemmer.stem();
-        System.out.println();
         
         return snowballStemmer.getCurrent();
 
-            //to.FromDocProcessor(snowballStemmer.getCurrent());
-        //sw.add(snowballStemmer.getCurrent());
     }
-        //to.FromDocProcessor(word);
 
-
-
-public String parseText(String text) {
-        return text.replaceAll("[^\\p{L}\\p{Z}]", "").replaceAll(" +", " ");
+    /**
+     * Para "limpar" a string retirando todos os carecters especiais
+     * 
+     * @param text
+     * @return
+     */
+    public String parseText(String text) {
+        return text.replaceAll("[^\\w ]", "").replaceAll(" +", " ");
+    }
+    
+    /**
+     * Para "limpar" a string retirando todas as tags
+     * 
+     * @param text
+     * @return
+     */
+    public String CheckSpecialCharacters(String text){
+        return text.replaceAll("<\\w>|<.\\w>", " ").replaceAll(" +", " ");
+    }
+     
+    /**
+     * Para adquirir a lista de stopwords noutras classes
+     * 
+     * @return
+     */
+    public HashSet<String> getStopWord() {
+        return StopWord;
     }
     
     public String lemmatization(){
         return null;
-    }
-    
-    public String CheckSpecialCharacters(String text){
-        return text.replaceAll("<\\w>|<.\\w>", "").replaceAll(" +", " ");
     }
     
     public String lowercase(){
