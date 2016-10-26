@@ -19,14 +19,13 @@ public class Indexer {
     private HashMap<String,HashMap<Integer, HashSet<String>>> hm = new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
    
     /**
-     * Esta função tem o intuito de inserir na hashmap os dados recolhidos pelo
-     * tokeneizer.
+     * Esta função tem o intuito de inserir na hashmap os dados recolhidos pelo tokeneizer.
      * 
      * @param key
      * @param DocId
      */
-    public void setHM(String key, String DocId) {       
-        if (hm.get(key) == null || !hm.containsKey(key)) { //caso a hashmap nao tiver o valor inserido na key (talvez nao seja preciso o hi.get(key) == null)
+    public void setHM(String key, String DocId) {      
+        if (hm.get(key) == null || !hm.containsKey(key)) { 
             hm.put(key, new HashMap<Integer, HashSet<String>>());
             hm.get(key).put(1, new HashSet<String>());
             hm.get(key).get(1).add(DocId);
@@ -73,14 +72,10 @@ public class Indexer {
      * Esta função tem a função para verificar o que existe na hashmap
      */
     public  void imprimir(){
-     //   System.out.println("A imprimir");
-     int num = 0;
         for(Map.Entry<String,HashMap<Integer, HashSet<String>>> entrySet : hm.entrySet()) {
-           /* String key = entrySet.getKey();
-            System.out.println(key + ": " + hm.get(key));*/
-           num++;
+            String key = entrySet.getKey();
+            System.out.println(key + ": " + hm.get(key));
         }
-        System.out.println("numero de linhsa: " + num);
     }
     
     /**

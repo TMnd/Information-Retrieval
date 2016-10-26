@@ -67,81 +67,39 @@ public class Tokeneizer {
      * @throws IOException
      */
     public void FromDocProcessor(ArrayList<String> array) throws IOException {
-       // System.out.println("Tokeneizer: A dar load das stoppingwords");
-        
         //Preenche o hashset primeiro antes desta função correr para nao criar problemas. 
         //Podia-se começar no principio do programa mas devido ao uso de arraylist no principio
         //penso que esta seja a melhor opção
         loadStoppingwords(); 
- 
-        //Percorrer o arraly list
-        Iterator leitorArray = array.iterator();
-      //  System.out.println("Tokeneizer: Preencher a hashmap");
+        Iterator leitorArray = array.iterator(); //Percorrer o arraly list
         while (leitorArray.hasNext()) {
             String ID = null;
-            String o = null;
             String line = (String) leitorArray.next(); 
             //Pra dividir os strings do arraylist pelo ',' 
-            // teste[0] = docId + nomeDoFicheiro
-            // tesste[1] = documento
             String[] teste = line.split(",", 2); 
             
             //Dividir por tokens o parte do documento
-            //StringTokenizer st = new StringTokenizer(parseText(CheckSpecialCases(CheckSpecialCharacters(teste[1])))); 
             StringTokenizer st = new StringTokenizer(teste[1].toLowerCase().replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", "").replaceAll("\\.", " ").replaceAll(" +", " ").trim());  //Elimina tudo menos os ' .
-            String aux = apagartudoMenosPontoApostrofe(teste[1]);
-            String[] OLAOLAOL = teste[1].toLowerCase().replaceAll("[^\\w'. ]", " ").replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", "").replaceAll("\\.", " ").replaceAll(" +", " ").trim().split(" ");
-            //Para guardar em variavel o id do doc para que possa ser usado depois
-            ID = teste[0]; 
-            
-            /*for(int i=0;i<OLAOLAOL.length;i++){
-             
-                if (!StopWord.contains(OLAOLAOL[i])) {
+            ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
+           
+            while (st.hasMoreElements()) { //Corre se a string tokeneizer tiver mais elementos
+                String token = st.nextToken();
+                if (!StopWord.contains(token)) {//Verifica se o token é uma stopword ou não
                     
-                    if(!OLAOLAOL[i].equals(" ")){
-                    //Insere a string que nao é uma stopword no stemmer
-                  //  String ii = (i);//Elimina tags, o'connor para oconnor e I.B.M para ibm
-                    //String qql=stemming(i);
-                    
-                 
-             
+                    String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", " ");//Elimina tags, o'connor para oconnor e I.B.M para ibm
+                    String tokenStemmer=stemming(tokentratado);
+  
                     //Insere a string que foi recebida pelo stemmer e o id 
                     //do decumento na hashmap que se encontra na class indexer
-                    in.setHM(OLAOLAOL[i], ID);
-                    
-                }
-                }
-            }*/
-            //Corre se a string tokeneizer tiver mais elementos
-            while (st.hasMoreElements()) {
-                //Torna cada token em string
-                String i = st.nextToken();
-                //Mete todos os caracteres da string em letras pequenas
-               // i = i.toLowerCase();
-
-                //Verifica se o token é uma stopword ou não
-                if (!StopWord.contains(i)) {
-                    
-                    //Insere a string que nao é uma stopword no stemmer
-                    String ii = CheckSpecialCases(i).replaceAll("\\'", " ").replaceAll(" +", " ");//Elimina tags, o'connor para oconnor e I.B.M para ibm
-                    String qql=stemming(ii);
-                    
-                    
-                    //Insere a string que foi recebida pelo stemmer e o id 
-                    //do decumento na hashmap que se encontra na class indexer
-                    in.setHM(qql, ID);
+                    in.setHM(tokenStemmer, ID);
                 }
             }
-            //Esta condição irá correr sempre que o iterator chegar ao ultimo
-            //valor do array
+            //Esta condição irá correr sempre que o iterator chegar ao ultimo valor do array
             if (!leitorArray.hasNext()) {
-             //   System.out.println("Tokeneizer: A calucar a frequencia dos documentos");
-                //Uma vez com a hashmap do indexer preenchida este metodo irá
-                //calcular a frequencia dos documentos para cada termo
+                //Uma vez com a hashmap do indexer preenchida este metodo irá calcular a frequencia dos documentos para cada termo
                 in.updateDocFrequency();
-            //    System.out.println("A Imprimir");
                 //Imprime a hashmap do indexer, para testes
-                in.imprimir();
+                //in.imprimir();
                 in.saveDisc();
             }
         }

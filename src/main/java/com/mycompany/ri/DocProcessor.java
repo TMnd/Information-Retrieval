@@ -25,6 +25,8 @@ public class DocProcessor {
     private String regex_inicial = "@";
 
     /**
+     * Ler o ficheiro zip inserido pelo utilizador
+     * 
      * Esta função é chamada na classe do CorpusReader.
      * Como parametro encontra-se uma string que corresponde ao caminho 
      * para o documento inserido pelo utilizador posteriormente para que depois
@@ -60,6 +62,7 @@ public class DocProcessor {
             for(int i=0;i<ficheiro.length;i++){
                 if(ficheiro[i].endsWith(".arff")){
                     ficheiroOnly = ficheiro[i];
+                    //System.out.println(ficheiroOnly);
                 }
             }
             /*Isto serve para filtrar a pasta __MACOSX*/         
@@ -92,8 +95,7 @@ public class DocProcessor {
      * @param ficheiro
      * @return
      */
-    public String DivideLine(String line, String ficheiro){
-            
+    public String DivideLine(String line, String ficheiro){        
             String rebuildString = null;
             //separar cada documento no primeiro ','
             String[] teste = line.split(",",2); 
