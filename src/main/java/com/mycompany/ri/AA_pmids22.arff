@@ -1,8 +1,0 @@
-@RELATION C0002520_C0001972
-
-@ATTRIBUTE PMID integer
-@ATTRIBUTE citation string
-@ATTRIBUTE class {M1, M2}
-
-@DATA
-1,"<e>Ala</e>(452) 95.5 o'connor I.B.M mafalda.",M1

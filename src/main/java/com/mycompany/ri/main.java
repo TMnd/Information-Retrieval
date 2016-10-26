@@ -21,15 +21,12 @@ public class main {
         CorpusReader cp = new CorpusReader();
         Indexer in = new Indexer();
         
-       /* Scanner sc = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
         
         System.out.println("Inserir o caminho para o ficheiro:");
-        String insert = sc.nextLine();*/
+        String insert = sc.nextLine();
         
-        //Mafalda
-        //cp.AnaliseFile("C:\\Users\\Mafalda Rodrigues\\Desktop\\RIIII\\RI\\src\\main\\java\\com\\mycompany\\ri\\sample_corpus.zip");
-        //Joao
-        cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\sample_corpus.zip");
+        cp.AnaliseFile(insert);
         
     }
 }

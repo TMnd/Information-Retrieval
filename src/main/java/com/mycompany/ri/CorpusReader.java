@@ -8,6 +8,7 @@ import java.io.IOException;
  */
 
 public class CorpusReader {
+    DocProcessor dc = new DocProcessor();
     /**
      * Esta função é chamada no main que tem como paramentro o caminho para o 
      * fiheiro que o utilizador terá de inserir.
@@ -19,8 +20,6 @@ public class CorpusReader {
      * 
      */
     public void AnaliseFile(String file) throws IOException {
-        DocProcessor dc = new DocProcessor();
-
         //Verifica se a extensão do ficheiro é um ficheiro zip
         if (file.endsWith(".zip")) {  
            // System.out.println("CorpusReader: ENTROU NA FUNÇÃO ZIP");

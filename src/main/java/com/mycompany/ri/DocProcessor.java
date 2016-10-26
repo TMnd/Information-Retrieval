@@ -15,6 +15,7 @@ import java.util.zip.ZipFile;
  * @author  Mafalda Rofrigues
  */
 public class DocProcessor {
+    Tokeneizer to = new Tokeneizer();
     //Padrão para usar o regex para tira as "" que rodeiam o documento
     Pattern padrao = Pattern.compile("\\\"([^\\\"]*)\\\""); 
     //O arraylist serve para armazenar todas as linhas lidas e tratadas para serem usadas no tokeneizer
@@ -38,7 +39,7 @@ public class DocProcessor {
      * @throws IOException
      */
     public void readFileZip(String file) throws IOException {
-        Tokeneizer to = new Tokeneizer();
+        
         
         String ficheiroOnly = null;
         

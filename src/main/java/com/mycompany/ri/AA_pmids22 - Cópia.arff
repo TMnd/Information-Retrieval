@@ -1,8 +1,0 @@
-@RELATION C0002520_C0001972
-
-@ATTRIBUTE PMID integer
-@ATTRIBUTE citation string
-@ATTRIBUTE class {M1, M2}
-
-@DATA
-1,"amaral amaral amaaral we joao",M1
