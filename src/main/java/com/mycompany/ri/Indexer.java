@@ -73,11 +73,14 @@ public class Indexer {
      * Esta função tem a função para verificar o que existe na hashmap
      */
     public  void imprimir(){
-        System.out.println("A imprimir");
+     //   System.out.println("A imprimir");
+     int num = 0;
         for(Map.Entry<String,HashMap<Integer, HashSet<String>>> entrySet : hm.entrySet()) {
-            String key = entrySet.getKey();
-            System.out.println(key + ": " + hm.get(key));
+           /* String key = entrySet.getKey();
+            System.out.println(key + ": " + hm.get(key));*/
+           num++;
         }
+        System.out.println("numero de linhsa: " + num);
     }
     
     /**
@@ -88,7 +91,7 @@ public class Indexer {
         FileWriter filewriterstream;
         BufferedWriter out;
 
-        System.out.println("teste");
+       // System.out.println("teste");
         filewriterstream = new FileWriter("src\\main\\java\\com\\mycompany\\ri\\IndexOutput.txt");
         out = new BufferedWriter(filewriterstream);
         for(Map.Entry<String,HashMap<Integer, HashSet<String>>> entrySet : hm.entrySet()) {
@@ -96,6 +99,6 @@ public class Indexer {
             out.write("KEY: " + key + " - " + hm.get(key) + "\n");
         }
         out.close();
-        System.out.println("Indexer: Texto criado");
+       // System.out.println("Indexer: Texto criado");
     }
 }

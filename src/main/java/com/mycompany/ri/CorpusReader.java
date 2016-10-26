@@ -23,18 +23,14 @@ public class CorpusReader {
 
         //Verifica se a extensão do ficheiro é um ficheiro zip
         if (file.endsWith(".zip")) {  
-            System.out.println("CorpusReader: ENTROU NA FUNÇÃO ZIP");
+           // System.out.println("CorpusReader: ENTROU NA FUNÇÃO ZIP");
 
             //Insere o ficheiro "file" na Classe DocProcessor
             dc.readFileZip(file); 
         } else {
             //Caso o ficheiro "file" nao seja um ficheiro zip o programa fechou
-            System.out.println("CorpusReader: NÃO ENTROU NA FUNÇÃO ZIP");
+           // System.out.println("CorpusReader: NÃO ENTROU NA FUNÇÃO ZIP");
             System.exit(0);
         }
-    }
-    
-    public String checkFormat(String file) {
-        return null;
     }
 }

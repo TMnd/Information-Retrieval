@@ -67,7 +67,7 @@ public class Tokeneizer {
      * @throws IOException
      */
     public void FromDocProcessor(ArrayList<String> array) throws IOException {
-        System.out.println("Tokeneizer: A dar load das stoppingwords");
+       // System.out.println("Tokeneizer: A dar load das stoppingwords");
         
         //Preenche o hashset primeiro antes desta função correr para nao criar problemas. 
         //Podia-se começar no principio do programa mas devido ao uso de arraylist no principio
@@ -76,10 +76,10 @@ public class Tokeneizer {
  
         //Percorrer o arraly list
         Iterator leitorArray = array.iterator();
-        System.out.println("Tokeneizer: Preencher a hashmap");
+      //  System.out.println("Tokeneizer: Preencher a hashmap");
         while (leitorArray.hasNext()) {
             String ID = null;
-            
+            String o = null;
             String line = (String) leitorArray.next(); 
             //Pra dividir os strings do arraylist pelo ',' 
             // teste[0] = docId + nomeDoFicheiro
@@ -87,22 +87,45 @@ public class Tokeneizer {
             String[] teste = line.split(",", 2); 
             
             //Dividir por tokens o parte do documento
-            StringTokenizer st = new StringTokenizer(parseText(CheckSpecialCharacters(teste[1]))); 
-            
+            //StringTokenizer st = new StringTokenizer(parseText(CheckSpecialCases(CheckSpecialCharacters(teste[1])))); 
+            StringTokenizer st = new StringTokenizer(teste[1].toLowerCase().replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", "").replaceAll("\\.", " ").replaceAll(" +", " ").trim());  //Elimina tudo menos os ' .
+            String aux = apagartudoMenosPontoApostrofe(teste[1]);
+            String[] OLAOLAOL = teste[1].toLowerCase().replaceAll("[^\\w'. ]", " ").replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", "").replaceAll("\\.", " ").replaceAll(" +", " ").trim().split(" ");
             //Para guardar em variavel o id do doc para que possa ser usado depois
             ID = teste[0]; 
-
+            
+            /*for(int i=0;i<OLAOLAOL.length;i++){
+             
+                if (!StopWord.contains(OLAOLAOL[i])) {
+                    
+                    if(!OLAOLAOL[i].equals(" ")){
+                    //Insere a string que nao é uma stopword no stemmer
+                  //  String ii = (i);//Elimina tags, o'connor para oconnor e I.B.M para ibm
+                    //String qql=stemming(i);
+                    
+                 
+             
+                    //Insere a string que foi recebida pelo stemmer e o id 
+                    //do decumento na hashmap que se encontra na class indexer
+                    in.setHM(OLAOLAOL[i], ID);
+                    
+                }
+                }
+            }*/
             //Corre se a string tokeneizer tiver mais elementos
             while (st.hasMoreElements()) {
                 //Torna cada token em string
                 String i = st.nextToken();
                 //Mete todos os caracteres da string em letras pequenas
-                i = i.toLowerCase();
-                
+               // i = i.toLowerCase();
+
                 //Verifica se o token é uma stopword ou não
                 if (!StopWord.contains(i)) {
+                    
                     //Insere a string que nao é uma stopword no stemmer
-                    String qql=stemming(i);
+                    String ii = CheckSpecialCases(i).replaceAll("\\'", " ").replaceAll(" +", " ");//Elimina tags, o'connor para oconnor e I.B.M para ibm
+                    String qql=stemming(ii);
+                    
                     
                     //Insere a string que foi recebida pelo stemmer e o id 
                     //do decumento na hashmap que se encontra na class indexer
@@ -112,13 +135,13 @@ public class Tokeneizer {
             //Esta condição irá correr sempre que o iterator chegar ao ultimo
             //valor do array
             if (!leitorArray.hasNext()) {
-                System.out.println("Tokeneizer: A calucar a frequencia dos documentos");
+             //   System.out.println("Tokeneizer: A calucar a frequencia dos documentos");
                 //Uma vez com a hashmap do indexer preenchida este metodo irá
                 //calcular a frequencia dos documentos para cada termo
                 in.updateDocFrequency();
-                System.out.println("A Imprimir");
+            //    System.out.println("A Imprimir");
                 //Imprime a hashmap do indexer, para testes
-                //in.imprimir();
+                in.imprimir();
                 in.saveDisc();
             }
         }
@@ -148,8 +171,15 @@ public class Tokeneizer {
      * @param text
      * @return
      */
-    public String parseText(String text) {
-        return text.replaceAll("[^\\w ]", "").replaceAll(" +", " ");
+    public String apagartudoMenosPontoApostrofe(String text) {
+       // return text.replaceAll("[^\\w ]", " ").replaceAll(" +", " ");
+        return text.replaceAll("[^\\w.'%]", " ").replaceAll(" +", " "); //remove tudo menos os . e ' e %
+    }
+    
+    public String parseText2(String text) {
+     //   return text.replaceAll("[.']", " ").replaceAll(" +", " ");
+        return text.replaceAll("\\.$", " ").replaceAll(" +", " "); //
+
     }
     
     /**
@@ -159,8 +189,14 @@ public class Tokeneizer {
      * @return
      */
     public String CheckSpecialCharacters(String text){
-        return text.replaceAll("<\\w>|<.\\w>", " ").replaceAll(" +", " ");
+        return text.replaceAll("<\\d>|<\\\\\\d>", " ").replaceAll(" +", " ");
     }
+    
+    public String CheckSpecialCases(String text){
+       //ESTA BOM return text.replaceAll("\\b'\\b", "");
+      return text.replaceAll("\\b'\\b", "").replaceAll(" +", " "); ///DONE
+    }
+    
      
     /**
      * Para adquirir a lista de stopwords noutras classes

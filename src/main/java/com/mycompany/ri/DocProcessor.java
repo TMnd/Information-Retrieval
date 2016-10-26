@@ -19,6 +19,7 @@ public class DocProcessor {
     Pattern padrao = Pattern.compile("\\\"([^\\\"]*)\\\""); 
     //O arraylist serve para armazenar todas as linhas lidas e tratadas para serem usadas no tokeneizer
     ArrayList<String> DocumentoEmMemoria = new ArrayList<String>(); 
+   
     
     //Para filtrar as linhas que começarem com um "@"
     private String regex_inicial = "@";
@@ -37,6 +38,8 @@ public class DocProcessor {
     public void readFileZip(String file) throws IOException {
         Tokeneizer to = new Tokeneizer();
         
+        String ficheiroOnly = null;
+        
         //Esta classe é usada para ler todos os ficheiro que se encontram no ficheiro zip
         ZipFile zipFile = new ZipFile(file);
         
@@ -53,10 +56,14 @@ public class DocProcessor {
             //Para cada linha (ids e os documentos) que contém cada ficheiro 
             String line; 
             //Para adquirir o nome de cada ficheiro ex: se o ficheiro tiver uma pasta sera: NomeDaPasta/NomeDoFicheiro. se for só o ficheiro aparecera só o ficheiro
-            String ficheiro = entry.getName(); 
-            
+            String[] ficheiro = entry.getName().split("/");
+            for(int i=0;i<ficheiro.length;i++){
+                if(ficheiro[i].endsWith(".arff")){
+                    ficheiroOnly = ficheiro[i];
+                }
+            }
             /*Isto serve para filtrar a pasta __MACOSX*/         
-            if(!ficheiro.contains("MACOSX")){
+            if(!ficheiro[0].contains("MACOSX")){
                 //Percorre todas as linhas de cada ficherio
                 while ((line = bufferedReader.readLine()) != null) {
                     //ler todas as linhas que nao tenham um @ (como foi descrito na variavel regex_inicial)
@@ -65,13 +72,13 @@ public class DocProcessor {
                         //ler todas as linha que nao estejam vazias
                         if (line.length() != 0) { 
                             //Adciona para o arraylist (para ser usado no tokeneizer) os documento
-                            DocumentoEmMemoria.add(DivideLine(line, ficheiro));
+                            DocumentoEmMemoria.add(DivideLine(line, ficheiroOnly));
                         }
                     }
                 }
             }
         }
-        System.out.println("DocProcessor: Leu o zip todo");
+      //  System.out.println("DocProcessor: Leu o zip todo");
         //Enviar o arraylist para o tokeneizer
         to.FromDocProcessor(DocumentoEmMemoria);
     }
@@ -97,7 +104,7 @@ public class DocProcessor {
             while (matcher.find()) {
                 //exemplo do resultado que a função devolve: 
                 // - idDoc_NomeDoFicheiro, TextoDoDoc
-                rebuildString = teste[0] + "_" + ficheiro + "," + matcher.group(1); 
+                rebuildString = teste[0] + "_" + ficheiro + "," + matcher.group(1);
             }
         return rebuildString;
     }
