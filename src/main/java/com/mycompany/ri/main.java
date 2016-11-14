@@ -19,14 +19,14 @@ public class main {
      */
     public static void main(String[] args) throws IOException{
         CorpusReader cp = new CorpusReader();
-        Indexer in = new Indexer();
+        
         
         Scanner sc = new Scanner(System.in);
         
         System.out.println("Inserir o caminho para o ficheiro:");
-        String insert = sc.nextLine();
+        //String insert = sc.nextLine();
         
-        cp.AnaliseFile(insert);
+        cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\corpus-RI.zip");
         
     }
 }

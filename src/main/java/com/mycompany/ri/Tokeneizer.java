@@ -16,6 +16,8 @@ import org.tartarus.snowball.SnowballStemmer;
  * @author  Mafalda Rofrigues
  */
 public class Tokeneizer {
+    
+    SnowballStemmer snowballStemmer = new englishStemmer();
     Indexer in = new Indexer();
   
     //Para guardar as StopWord que se encontram num ficheiro para um hashset
@@ -97,7 +99,7 @@ public class Tokeneizer {
             //Esta condição irá correr sempre que o iterator chegar ao ultimo valor do array
             if (!leitorArray.hasNext()) {
                 //Uma vez com a hashmap do indexer preenchida este metodo irá calcular a frequencia dos documentos para cada termo
-                in.updateDocFrequency();
+                //in.updateDocFrequency();
                 //Imprime a hashmap do indexer, para testes
                 //in.imprimir();
                 in.saveDisc();
@@ -113,8 +115,6 @@ public class Tokeneizer {
      */
     public String stemming(String word) {
        
-        SnowballStemmer snowballStemmer = new englishStemmer();
- 
         snowballStemmer.setCurrent(word);
 
         snowballStemmer.stem();

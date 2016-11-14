@@ -16,15 +16,33 @@ import java.util.Map;
 
 public class Indexer {
     //HashMap que irá conter toda a informação que tem de se indexar
-    private HashMap<String,HashMap<Integer, HashSet<String>>> hm = new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
-   
+    //private HashMap<String,HashMap<Integer, HashSet<String>>> hm = new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
+    private HashMap<String,HashMap<String, Integer>> hm = new HashMap<String,HashMap<String, Integer>>();
+    
+    public void setHM(String key, String DocId){
+        if(hm.get(key) == null || !hm.containsKey(key)){
+            hm.put(key, new HashMap<String, Integer>());
+            hm.get(key).put(DocId, 1);
+        }else{
+            if(!hm.get(key).containsKey(DocId)){
+               hm.get(key).put(DocId, 1);
+            }else{
+               int frequencia = hm.get(key).get(DocId);
+               frequencia++;
+               hm.get(key).put(DocId, frequencia); 
+            }
+        }
+    }
+    
+    
+    
     /**
      * Esta função tem o intuito de inserir na hashmap os dados recolhidos pelo tokeneizer.
      * 
      * @param key
      * @param DocId
      */
-    public void setHM(String key, String DocId) {      
+    /*public void setHM(String key, String DocId) {      
         if (hm.get(key) == null || !hm.containsKey(key)) { 
             hm.put(key, new HashMap<Integer, HashSet<String>>());
             hm.get(key).put(1, new HashSet<String>());
@@ -32,13 +50,13 @@ public class Indexer {
         }else if(hm.containsKey(key)){ //Caso que a key ja exista (nao a primeira ocorrencia)
             hm.get(key).get(1).add(DocId);
         }
-    }
+    }*/
     
     /**
      * A função ser ve para actualizar o valor das keys da sub-hashmap.
      * Os valores da key da sub-hashmap correspondem a frequencia dos docimentos
      */
-    public void updateDocFrequency(){
+  /*  public void updateDocFrequency(){
         Iterator<Map.Entry<String, HashMap<Integer, HashSet<String>>>> parent = hm.entrySet().iterator();
         //Percorre todas as key (termos) da hashmap
         while(parent.hasNext()){
@@ -48,7 +66,7 @@ public class Indexer {
                 key - é a key principal
                 key2 - é a key da sub-hashmap
             */
-            Iterator<Map.Entry<Integer,HashSet<String>>> child = key.getValue().entrySet().iterator();
+           /* Iterator<Map.Entry<Integer,HashSet<String>>> child = key.getValue().entrySet().iterator();
             //Percorre a sub-hashmap
             while(child.hasNext()){
                 //Recebe o valor da cada key da sub-hashmap
@@ -66,17 +84,17 @@ public class Indexer {
                 hm.get(key2).put(tamanho, aux);
             }            
         }
-    }
+    }*/
     
     /**
      * Esta função tem a função para verificar o que existe na hashmap
      */
-    public  void imprimir(){
+   /* public  void imprimir(){
         for(Map.Entry<String,HashMap<Integer, HashSet<String>>> entrySet : hm.entrySet()) {
             String key = entrySet.getKey();
             System.out.println(key + ": " + hm.get(key));
         }
-    }
+    }/*
     
     /**
      * Esta função serve para imprimir num ficheiro txt a hashmap
@@ -89,8 +107,16 @@ public class Indexer {
        // System.out.println("teste");
         filewriterstream = new FileWriter("src\\main\\java\\com\\mycompany\\ri\\IndexOutput.txt");
         out = new BufferedWriter(filewriterstream);
-        for(Map.Entry<String,HashMap<Integer, HashSet<String>>> entrySet : hm.entrySet()) {
+        for(Map.Entry<String,HashMap<String, Integer>> entrySet : hm.entrySet()) {
             String key = entrySet.getKey();
+        /*Iterator<Map.Entry<String,HashMap<String,Integer>>> parent = hm.entrySet().iterator();
+        while(parent.hasNext()){
+            Map.Entry<String,HashMap<String,Integer>> key = parent.next();
+            String MainKey = key.getKey();
+            Iterator<Map.Entry<String,Integer>> child = key.getValue().entrySet().iterator();
+            while(p\)
+                String subkey = child.g
+            }*/
             out.write("KEY: " + key + " - " + hm.get(key) + "\n");
         }
         out.close();
