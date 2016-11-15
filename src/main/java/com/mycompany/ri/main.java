@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.ri;
 
 import java.io.IOException;
@@ -24,9 +19,10 @@ public class main {
         Scanner sc = new Scanner(System.in);
         
         System.out.println("Inserir o caminho para o ficheiro:");
-        //String insert = sc.nextLine();
+        String insert = sc.nextLine();
+        System.out.println("a ler");
         
-        cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\corpus-RI.zip");
-        
+        cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
+        //D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\corpus-RI.zip
     }
 }

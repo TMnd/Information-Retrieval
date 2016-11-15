@@ -1,44 +1,52 @@
-
 package com.mycompany.ri;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
 /**
- * @author  João Amaral
- * @author  Mafalda Rofrigues
+ * @author João Amaral
+ * @author Mafalda Rofrigues
  */
-
 public class Indexer {
+    Runtime runtime = Runtime.getRuntime();
+    int cont=0;
+           int cont2=0;
     //HashMap que irá conter toda a informação que tem de se indexar
     //private HashMap<String,HashMap<Integer, HashSet<String>>> hm = new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
-    private HashMap<String,HashMap<String, Integer>> hm = new HashMap<String,HashMap<String, Integer>>();
-    
-    public void setHM(String key, String DocId){
-        if(hm.get(key) == null || !hm.containsKey(key)){
-            hm.put(key, new HashMap<String, Integer>());
-            hm.get(key).put(DocId, 1);
+    private HashMap<String, HashMap<String, Integer>> hm = new HashMap<String, HashMap<String, Integer>>();
+
+    public void setHM(String key, String DocId) throws IOException {
+        if(checkMemory()){
+            saveDisc(0);
+          //  System.out.println("antes: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
+            hm.clear();
+            System.gc(); //I FUCKING HATE THIS!
+          //  System.out.println("depois: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
+          //  System.out.println("True");
         }else{
-            if(!hm.get(key).containsKey(DocId)){
-               hm.get(key).put(DocId, 1);
-            }else{
-               int frequencia = hm.get(key).get(DocId);
-               frequencia++;
-               hm.get(key).put(DocId, frequencia); 
+            if (hm.get(key) == null || !hm.containsKey(key)) {
+                hm.put(key, new HashMap<String, Integer>());
+                hm.get(key).put(DocId, 1);
+            } else if (!hm.get(key).containsKey(DocId)) {
+                hm.get(key).put(DocId, 1);
+            } else {
+                int frequencia = hm.get(key).get(DocId);
+                frequencia++;
+                hm.get(key).put(DocId, frequencia);
             }
         }
     }
-    
-    
-    
+
     /**
-     * Esta função tem o intuito de inserir na hashmap os dados recolhidos pelo tokeneizer.
-     * 
+     * Esta função tem o intuito de inserir na hashmap os dados recolhidos pelo
+     * tokeneizer.
+     *
      * @param key
      * @param DocId
      */
@@ -51,12 +59,11 @@ public class Indexer {
             hm.get(key).get(1).add(DocId);
         }
     }*/
-    
     /**
-     * A função ser ve para actualizar o valor das keys da sub-hashmap.
-     * Os valores da key da sub-hashmap correspondem a frequencia dos docimentos
+     * A função ser ve para actualizar o valor das keys da sub-hashmap. Os
+     * valores da key da sub-hashmap correspondem a frequencia dos docimentos
      */
-  /*  public void updateDocFrequency(){
+    /*  public void updateDocFrequency(){
         Iterator<Map.Entry<String, HashMap<Integer, HashSet<String>>>> parent = hm.entrySet().iterator();
         //Percorre todas as key (termos) da hashmap
         while(parent.hasNext()){
@@ -65,8 +72,8 @@ public class Indexer {
             /*
                 key - é a key principal
                 key2 - é a key da sub-hashmap
-            */
-           /* Iterator<Map.Entry<Integer,HashSet<String>>> child = key.getValue().entrySet().iterator();
+     */
+ /* Iterator<Map.Entry<Integer,HashSet<String>>> child = key.getValue().entrySet().iterator();
             //Percorre a sub-hashmap
             while(child.hasNext()){
                 //Recebe o valor da cada key da sub-hashmap
@@ -85,41 +92,67 @@ public class Indexer {
             }            
         }
     }*/
-    
     /**
      * Esta função tem a função para verificar o que existe na hashmap
      */
-   /* public  void imprimir(){
+    /* public  void imprimir(){
         for(Map.Entry<String,HashMap<Integer, HashSet<String>>> entrySet : hm.entrySet()) {
             String key = entrySet.getKey();
             System.out.println(key + ": " + hm.get(key));
         }
-    }/*
-    
+    }*/
+    //verificar a memoria
+    public boolean checkMemory() {
+        
+        NumberFormat format = NumberFormat.getInstance();
+
+        /*
+        NOTAS:
+        - Free Memory: Devolve a quantidade de memoria livre no Java Virtual Machine
+        - Max Memory: Devolve a maxima quantidade que a Java Virtual Machine irá usar (valores inseridos na maquina no terminal de linux ou no java em si no windows)
+        - Total Memory: Mesmo que a Max Memory, mas poder]a variar ao logo do tempo dependendo as instancias criadas/usadas
+        */
+        
+        final long maxmemory = runtime.maxMemory() / 1024;
+        long maxRecal = (long) (maxmemory*.6);
+        final long usedMem = ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024));
+        
+        cont++;
+        
+        if(usedMem >= maxRecal){
+          //  System.out.println("Contador: " + cont);
+            /*System.out.println("-------------------------");
+            System.out.println("Contador: " + cont);
+            System.out.println("max memory: " + runtime.maxMemory() / 1024); 
+            System.out.println("used: " + usedMem);
+            System.out.println("60%: " + maxRecal);
+            System.out.println("-------------------------");*/
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
     /**
      * Esta função serve para imprimir num ficheiro txt a hashmap
-     * 
+     *
      */
-    public void saveDisc() throws IOException{
+    public void saveDisc(int option) throws IOException {
         FileWriter filewriterstream;
         BufferedWriter out;
 
-       // System.out.println("teste");
-        filewriterstream = new FileWriter("src\\main\\java\\com\\mycompany\\ri\\IndexOutput.txt");
+        if(option == 1){
+            filewriterstream = new FileWriter("src\\main\\java\\com\\mycompany\\ri\\IndexOutput.txt");
+        }else{
+            cont2++;
+            filewriterstream = new FileWriter("src\\main\\java\\com\\mycompany\\ri\\ficheiro"+cont2+".txt");
+        }
         out = new BufferedWriter(filewriterstream);
-        for(Map.Entry<String,HashMap<String, Integer>> entrySet : hm.entrySet()) {
+        for (Map.Entry<String, HashMap<String, Integer>> entrySet : hm.entrySet()) {
             String key = entrySet.getKey();
-        /*Iterator<Map.Entry<String,HashMap<String,Integer>>> parent = hm.entrySet().iterator();
-        while(parent.hasNext()){
-            Map.Entry<String,HashMap<String,Integer>> key = parent.next();
-            String MainKey = key.getKey();
-            Iterator<Map.Entry<String,Integer>> child = key.getValue().entrySet().iterator();
-            while(p\)
-                String subkey = child.g
-            }*/
             out.write("KEY: " + key + " - " + hm.get(key) + "\n");
         }
         out.close();
-       // System.out.println("Indexer: Texto criado");
     }
 }

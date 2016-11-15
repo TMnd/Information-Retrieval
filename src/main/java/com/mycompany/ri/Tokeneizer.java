@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-import org.tartarus.snowball.ext.englishStemmer;
-import org.tartarus.snowball.SnowballStemmer;
+/*import org.tartarus.snowball.ext.englishStemmer;
+import org.tartarus.snowball.SnowballStemmer;*/
 
 /**
  * @author  João Amaral
@@ -17,7 +17,7 @@ import org.tartarus.snowball.SnowballStemmer;
  */
 public class Tokeneizer {
     
-    SnowballStemmer snowballStemmer = new englishStemmer();
+   // SnowballStemmer snowballStemmer = new englishStemmer();
     Indexer in = new Indexer();
   
     //Para guardar as StopWord que se encontram num ficheiro para um hashset
@@ -33,7 +33,8 @@ public class Tokeneizer {
      */
     public void loadStoppingwords() throws FileNotFoundException, IOException {
         //Carregar o ficheiro que contém as stopwords
-        String StopWords = "src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt";
+        String StopWords = "D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\stopwords_en.txt";
+        //D:\OwnCloud\Documents\Universidade\Recuperação de Informação\RI\src\main\java\com\mycompany\ri\stopwords_en.txt
         
         //ler o ficheiro txt
         FileReader f = new FileReader(StopWords); 
@@ -89,11 +90,11 @@ public class Tokeneizer {
                 if (!StopWord.contains(token)) {//Verifica se o token é uma stopword ou não
                     
                     String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", " ");//Elimina tags, o'connor para oconnor e I.B.M para ibm
-                    String tokenStemmer=stemming(tokentratado);
+                   // String tokenStemmer=stemming(tokentratado);
   
                     //Insere a string que foi recebida pelo stemmer e o id 
                     //do decumento na hashmap que se encontra na class indexer
-                    in.setHM(tokenStemmer, ID);
+                    in.setHM(tokentratado, ID);
                 }
             }
             //Esta condição irá correr sempre que o iterator chegar ao ultimo valor do array
@@ -102,7 +103,8 @@ public class Tokeneizer {
                 //in.updateDocFrequency();
                 //Imprime a hashmap do indexer, para testes
                 //in.imprimir();
-                in.saveDisc();
+                //in.checkMemory();
+                in.saveDisc(1);
             }
         }
     }
@@ -113,7 +115,7 @@ public class Tokeneizer {
      * @param word
      * @return
      */
-    public String stemming(String word) {
+   /* public String stemming(String word) {
        
         snowballStemmer.setCurrent(word);
 
@@ -121,7 +123,7 @@ public class Tokeneizer {
         
         return snowballStemmer.getCurrent();
 
-    }
+    }*/
 
     /**
      * Para "limpar" a string retirando todos os carecters especiais
