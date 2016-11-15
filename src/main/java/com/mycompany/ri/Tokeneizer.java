@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-/*import org.tartarus.snowball.ext.englishStemmer;
-import org.tartarus.snowball.SnowballStemmer;*/
+import org.tartarus.snowball.ext.englishStemmer;
+import org.tartarus.snowball.SnowballStemmer;
 
 /**
  * @author  João Amaral
@@ -17,7 +17,7 @@ import org.tartarus.snowball.SnowballStemmer;*/
  */
 public class Tokeneizer {
     
-   // SnowballStemmer snowballStemmer = new englishStemmer();
+    SnowballStemmer snowballStemmer = new englishStemmer();
     Indexer in = new Indexer();
   
     //Para guardar as StopWord que se encontram num ficheiro para um hashset
@@ -86,15 +86,17 @@ public class Tokeneizer {
             ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
            
             while (st.hasMoreElements()) { //Corre se a string tokeneizer tiver mais elementos
-                String token = st.nextToken();
+                String token = st.nextToken().trim();
                 if (!StopWord.contains(token)) {//Verifica se o token é uma stopword ou não
                     
                     String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", " ");//Elimina tags, o'connor para oconnor e I.B.M para ibm
-                   // String tokenStemmer=stemming(tokentratado);
+                    String tokenStemmer=stemming(tokentratado);
+                    
+                    char caracter = getCharacter(tokenStemmer);
   
                     //Insere a string que foi recebida pelo stemmer e o id 
                     //do decumento na hashmap que se encontra na class indexer
-                    in.setHM(tokentratado, ID);
+                    in.setHM(tokentratado, ID, caracter);
                 }
             }
             //Esta condição irá correr sempre que o iterator chegar ao ultimo valor do array
@@ -108,6 +110,12 @@ public class Tokeneizer {
             }
         }
     }
+    
+    public char getCharacter(String token){
+        char[] aux = token.toCharArray();
+        
+        return aux[0];
+    }
 
     /**
      * Tratamento de palavras usando a biblioteca SnowballStemmer
@@ -115,7 +123,7 @@ public class Tokeneizer {
      * @param word
      * @return
      */
-   /* public String stemming(String word) {
+    public String stemming(String word) {
        
         snowballStemmer.setCurrent(word);
 
@@ -123,7 +131,7 @@ public class Tokeneizer {
         
         return snowballStemmer.getCurrent();
 
-    }*/
+    }
 
     /**
      * Para "limpar" a string retirando todos os carecters especiais

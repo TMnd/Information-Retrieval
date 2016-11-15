@@ -7,6 +7,7 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -19,9 +20,9 @@ public class Indexer {
            int cont2=0;
     //HashMap que irá conter toda a informação que tem de se indexar
     //private HashMap<String,HashMap<Integer, HashSet<String>>> hm = new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
-    private HashMap<String, HashMap<String, Integer>> hm = new HashMap<String, HashMap<String, Integer>>();
+    private HashMap<Character , HashMap<String, HashMap<String, Integer>>> hm = new HashMap<Character, HashMap<String, HashMap<String, Integer>>>();
 
-    public void setHM(String key, String DocId) throws IOException {
+    public void setHM(String key, String DocId, char character) throws IOException {
         if(checkMemory()){
             saveDisc(0);
           //  System.out.println("antes: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
@@ -30,7 +31,22 @@ public class Indexer {
           //  System.out.println("depois: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
           //  System.out.println("True");
         }else{
-            if (hm.get(key) == null || !hm.containsKey(key)) {
+            if(hm.get(character) == null){
+                hm.put(character, new HashMap<>());
+            }else if(hm.containsKey(character)){
+                if(!hm.get(character).containsKey(key)){
+                    hm.get(character).put(key, new HashMap<String, Integer>());
+                    hm.get(character).get(key).put(DocId, 1);
+                }else if(!hm.get(character).get(key).containsKey(DocId)){
+                    hm.get(character).get(key).put(DocId, 1);
+                }else{
+                    int frequencia = hm.get(character).get(key).get(DocId);
+                    frequencia++;
+                    hm.get(character).get(key).put(DocId,frequencia);
+                }
+            }
+            
+            /*if (hm.get(key) == null || !hm.containsKey(key)) {
                 hm.put(key, new HashMap<String, Integer>());
                 hm.get(key).put(DocId, 1);
             } else if (!hm.get(key).containsKey(DocId)) {
@@ -39,7 +55,7 @@ public class Indexer {
                 int frequencia = hm.get(key).get(DocId);
                 frequencia++;
                 hm.get(key).put(DocId, frequencia);
-            }
+            }*/
         }
     }
 
@@ -143,14 +159,14 @@ public class Indexer {
         BufferedWriter out;
 
         if(option == 1){
-            filewriterstream = new FileWriter("src\\main\\java\\com\\mycompany\\ri\\IndexOutput.txt");
+            filewriterstream = new FileWriter("IndexOutput.txt");
         }else{
             cont2++;
-            filewriterstream = new FileWriter("src\\main\\java\\com\\mycompany\\ri\\ficheiro"+cont2+".txt");
+            filewriterstream = new FileWriter("ficheiro"+cont2+".txt");
         }
         out = new BufferedWriter(filewriterstream);
-        for (Map.Entry<String, HashMap<String, Integer>> entrySet : hm.entrySet()) {
-            String key = entrySet.getKey();
+        for (Map.Entry<Character, HashMap<String, HashMap<String, Integer>>> entrySet : hm.entrySet()) {
+            Character key = entrySet.getKey();
             out.write("KEY: " + key + " - " + hm.get(key) + "\n");
         }
         out.close();
