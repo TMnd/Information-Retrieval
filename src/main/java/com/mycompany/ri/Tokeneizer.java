@@ -90,13 +90,11 @@ public class Tokeneizer {
                 if (!StopWord.contains(token)) {//Verifica se o token é uma stopword ou não
                     
                     String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", " ");//Elimina tags, o'connor para oconnor e I.B.M para ibm
-                    String tokenStemmer=stemming(tokentratado);
-                    
-                    char caracter = getCharacter(tokenStemmer);
+                    String tokenStemmer=stemming(tokentratado);                 
   
                     //Insere a string que foi recebida pelo stemmer e o id 
                     //do decumento na hashmap que se encontra na class indexer
-                    in.setHM(tokentratado, ID, caracter);
+                    in.setHM(tokenStemmer, ID);
                 }
             }
             //Esta condição irá correr sempre que o iterator chegar ao ultimo valor do array

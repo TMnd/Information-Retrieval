@@ -17,36 +17,29 @@ import java.util.Map;
 public class Indexer {
     Runtime runtime = Runtime.getRuntime();
     int cont=0;
-           int cont2=0;
+    int cont2=0;
     //HashMap que irá conter toda a informação que tem de se indexar
     //private HashMap<String,HashMap<Integer, HashSet<String>>> hm = new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
-    private HashMap<Character , HashMap<String, HashMap<String, Integer>>> hm = new HashMap<Character, HashMap<String, HashMap<String, Integer>>>();
+    private HashMap<String, HashMap<String, Integer>> hm = new HashMap<String, HashMap<String, Integer>>();
 
-    public void setHM(String key, String DocId, char character) throws IOException {
-        if(checkMemory()){
+    public void setHM(String key, String DocId) throws IOException {
+        boolean aux = false;//checkMemory(0);
+        if(checkMemory(1)){
             saveDisc(0);
-          //  System.out.println("antes: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
+            System.out.println("antes: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
             hm.clear();
-            System.gc(); //I FUCKING HATE THIS!
-          //  System.out.println("depois: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
-          //  System.out.println("True");
-        }else{
-            if(hm.get(character) == null){
-                hm.put(character, new HashMap<>());
-            }else if(hm.containsKey(character)){
-                if(!hm.get(character).containsKey(key)){
-                    hm.get(character).put(key, new HashMap<String, Integer>());
-                    hm.get(character).get(key).put(DocId, 1);
-                }else if(!hm.get(character).get(key).containsKey(DocId)){
-                    hm.get(character).get(key).put(DocId, 1);
-                }else{
-                    int frequencia = hm.get(character).get(key).get(DocId);
-                    frequencia++;
-                    hm.get(character).get(key).put(DocId,frequencia);
-                }
-            }
             
-            /*if (hm.get(key) == null || !hm.containsKey(key)) {
+            
+          
+            if(checkMemory(0)){
+                System.out.println("maior que 20% de memoria");
+                System.gc();
+                aux = checkMemory(0);
+                System.out.println("depois: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
+            }
+          
+        }else{
+           if (hm.get(key) == null || !hm.containsKey(key)) {
                 hm.put(key, new HashMap<String, Integer>());
                 hm.get(key).put(DocId, 1);
             } else if (!hm.get(key).containsKey(DocId)) {
@@ -55,9 +48,12 @@ public class Indexer {
                 int frequencia = hm.get(key).get(DocId);
                 frequencia++;
                 hm.get(key).put(DocId, frequencia);
-            }*/
+            }
         }
+            
+            /**/
     }
+    
 
     /**
      * Esta função tem o intuito de inserir na hashmap os dados recolhidos pelo
@@ -118,7 +114,7 @@ public class Indexer {
         }
     }*/
     //verificar a memoria
-    public boolean checkMemory() {
+    public boolean checkMemory(int option) {
         
         NumberFormat format = NumberFormat.getInstance();
 
@@ -131,23 +127,24 @@ public class Indexer {
         
         final long maxmemory = runtime.maxMemory() / 1024;
         long maxRecal = (long) (maxmemory*.6);
+        long minRecal = (long) (maxmemory*.2);
         final long usedMem = ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024));
         
-        cont++;
-        
-        if(usedMem >= maxRecal){
-          //  System.out.println("Contador: " + cont);
-            /*System.out.println("-------------------------");
-            System.out.println("Contador: " + cont);
-            System.out.println("max memory: " + runtime.maxMemory() / 1024); 
-            System.out.println("used: " + usedMem);
-            System.out.println("60%: " + maxRecal);
-            System.out.println("-------------------------");*/
-            return true;
+      
+        if(option == 1){
+            cont++;
+            if(usedMem >= maxRecal){
+                return true;
+            }else{
+                return false;
+            }
         }else{
-            return false;
+            if(usedMem >= minRecal){
+                return true;
+            }else{
+                return false;
+            }
         }
-
     }
 
     /**
@@ -165,8 +162,8 @@ public class Indexer {
             filewriterstream = new FileWriter("ficheiro"+cont2+".txt");
         }
         out = new BufferedWriter(filewriterstream);
-        for (Map.Entry<Character, HashMap<String, HashMap<String, Integer>>> entrySet : hm.entrySet()) {
-            Character key = entrySet.getKey();
+        for (Map.Entry<String, HashMap<String, Integer>> entrySet : hm.entrySet()) {
+            String key = entrySet.getKey();
             out.write("KEY: " + key + " - " + hm.get(key) + "\n");
         }
         out.close();
