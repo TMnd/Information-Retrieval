@@ -1,14 +1,15 @@
 package com.mycompany.ri;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * @author João Amaral
@@ -16,42 +17,49 @@ import java.util.Map;
  */
 public class Indexer {
     Runtime runtime = Runtime.getRuntime();
+    StringBuilder content =new StringBuilder();
     int cont=0;
-    int cont2=0;
+    int cont5 = 0;
     //HashMap que irá conter toda a informação que tem de se indexar
     //private HashMap<String,HashMap<Integer, HashSet<String>>> hm = new HashMap<String,HashMap<Integer, HashSet<String>>>(); //Hashmap que ira conter o termo e o iddoc
-    private HashMap<String, HashMap<String, Integer>> hm = new HashMap<String, HashMap<String, Integer>>();
-
-    public void setHM(String key, String DocId) throws IOException {
-        boolean aux = false;//checkMemory(0);
-        if(checkMemory(1)){
-            saveDisc(0);
-            System.out.println("antes: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
-            hm.clear();
+    //private HashMap<String, HashMap<String, Integer>> hm = new HashMap<String, HashMap<String, Integer>>();
+    TreeMap<String, HashMap<Integer, Integer>> hm = new TreeMap<String, HashMap<Integer, Integer>>();
+    
+    public void setHM(ArrayList<String> chave, int DocId) throws IOException {
+            boolean aux = false;//checkMemory(0);
             
-            
+            //System.out.println("Encher para a hash");
+            for(int i=0; i<chave.size();i++){
+                String key = chave.get(i);
+                if (!hm.containsKey(key)) {
+                    hm.put(key, new HashMap<Integer, Integer>());
+                    hm.get(key).put(DocId, 1);
+                } else if (!hm.get(key).containsKey(DocId)) {
+                    hm.get(key).put(DocId, 1);
+                } else {
+                    int frequencia = hm.get(key).get(DocId);
+                    frequencia++;
+                    hm.get(key).put(DocId, frequencia);
+                }
+            }
+           /* System.out.println("A escrever para o disco");
+           saveDisc();*/
           
-            if(checkMemory(0)){
-                System.out.println("maior que 20% de memoria");
+            //System.out.println(hm);
+           /* if(checkMemory(1)){
+                System.out.println("Criar um ficheiro novo");
+                saveDisc();
+                System.out.println("antes: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
+                hm.clear();
                 System.gc();
-                aux = checkMemory(0);
-                System.out.println("depois: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
-            }
-          
-        }else{
-           if (hm.get(key) == null || !hm.containsKey(key)) {
-                hm.put(key, new HashMap<String, Integer>());
-                hm.get(key).put(DocId, 1);
-            } else if (!hm.get(key).containsKey(DocId)) {
-                hm.get(key).put(DocId, 1);
-            } else {
-                int frequencia = hm.get(key).get(DocId);
-                frequencia++;
-                hm.get(key).put(DocId, frequencia);
-            }
-        }
-            
-            /**/
+                System.gc();
+                /*if(checkMemory(0)){
+                    System.out.println("maior que 20% de memoria");
+                    System.gc();
+                    //aux = checkMemory(0);
+                    System.out.println("depois: " + ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024)));
+                }*/
+            //}  
     }
     
 
@@ -114,10 +122,8 @@ public class Indexer {
         }
     }*/
     //verificar a memoria
-    public boolean checkMemory(int option) {
+    public void checkMemoryAndStore() throws IOException {
         
-        NumberFormat format = NumberFormat.getInstance();
-
         /*
         NOTAS:
         - Free Memory: Devolve a quantidade de memoria livre no Java Virtual Machine
@@ -125,47 +131,119 @@ public class Indexer {
         - Total Memory: Mesmo que a Max Memory, mas poder]a variar ao logo do tempo dependendo as instancias criadas/usadas
         */
         
-        final long maxmemory = runtime.maxMemory() / 1024;
-        long maxRecal = (long) (maxmemory*.6);
+        final long maxmemory = runtime.maxMemory();
+        long maxRecal = (long) (maxmemory*.7);
         long minRecal = (long) (maxmemory*.2);
-        final long usedMem = ((runtime.totalMemory() / 1024) - (runtime.freeMemory() / 1024));
+        long usedMem = (100*(runtime.totalMemory() - runtime.freeMemory()))/runtime.totalMemory();
         
       
-        if(option == 1){
-            cont++;
-            if(usedMem >= maxRecal){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
+        //if(option == 1){
+            
+           // if(usedMem >= maxRecal){
+           System.out.println(usedMem);
+            if(usedMem > 60){
+                System.out.println("escrever");
+                cont++;
+                File f = new File("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\teste\\index" + cont + ".txt");
+                f.createNewFile();
+                FileWriter fw = new FileWriter(f.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                for(Map.Entry<String,HashMap<Integer, Integer>> parent: hm.entrySet()){
+                    String key = parent.getKey();
+                    
+                    String content = key;
+                    //content.append(key);
+                    
+                    for (Entry<Integer, Integer> child : hm.get(key).entrySet()) {
+                        int subkey = child.getKey();
+
+                        int subvalue = child.getValue();
+                        
+                       /* content.append(",");
+                        content.append(subvalue);
+                        content.append(":");
+                        content.append(subvalue);*/
+                        content += "," + subkey + ":" + subvalue;
+                    }
+                    content += System.lineSeparator();
+                    //content.append("\n");
+                    bw.write(content.toString());
+                }
+                bw.close();
+                
+                hm.clear();
+                System.gc();
+                System.gc();
+                System.out.println("limpei");
+                //return true;
+            }//else{
+                //return false;
+            //}
+        /*}else{
             if(usedMem >= minRecal){
                 return true;
             }else{
                 return false;
             }
-        }
+        }*/
     }
 
     /**
      * Esta função serve para imprimir num ficheiro txt a hashmap
      *
      */
-    public void saveDisc(int option) throws IOException {
-        FileWriter filewriterstream;
-        BufferedWriter out;
-
-        if(option == 1){
-            filewriterstream = new FileWriter("IndexOutput.txt");
-        }else{
-            cont2++;
-            filewriterstream = new FileWriter("ficheiro"+cont2+".txt");
+    public void saveDisc() throws IOException{        
+        for(groups group: groups.values()){
+            //group -> Devolve Group_a, etc
+            //groups.getGroupInitiasl(group) -> Devolve só a letra final tirando Group_
+            File f = new File("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\teste\\" + groups.getGroupInitiasl(group) + cont5 + ".txt");
+            f.createNewFile();
+            FileWriter fw = new FileWriter(f.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+        
+            for(Map.Entry<String,HashMap<Integer, Integer>> parent: hm.entrySet()){
+                String key = parent.getKey();
+                //HashMap value = parent.getValue();
+                
+                if(!group.matchesGroup(group, key)){
+                    //Funciona!!!
+                    continue;
+                }
+                
+                String content = key;
+                
+                for(Map.Entry<Integer, Integer> child : hm.get(key).entrySet()){
+                    int subKey = child.getKey();
+                    int subvalue = child.getValue();
+                    
+                    content += "," + subKey + ":" + subvalue;
+                }
+                content += System.lineSeparator();
+                bw.write(content);
+            }
+            bw.close();
+           
         }
-        out = new BufferedWriter(filewriterstream);
-        for (Map.Entry<String, HashMap<String, Integer>> entrySet : hm.entrySet()) {
-            String key = entrySet.getKey();
-            out.write("KEY: " + key + " - " + hm.get(key) + "\n");
-        }
-        out.close();
+        cont5++;
     }
-}
+}               
+                /*// Get length of file in bytes
+                long fileSizeInBytes = f.length();
+                // Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
+                long fileSizeInKB = fileSizeInBytes / 1024;
+                // Convert the KB to MegaBytes (1 MB = 1024 KBytes)
+                long fileSizeInMB = fileSizeInKB / 1024;*/
+                    
+               /* if(f.exists() && !f.isDirectory()) {
+                   //if (fileSizeInMB > 100) {
+                        FileWriter fileWritter = new FileWriter(f,true);
+                    try (BufferedWriter bufferWritter = new BufferedWriter(fileWritter)) {
+                        bufferWritter.write(key + " - " + hm.get(key) + "\n");
+                        //  }
+                    }
+                }else{
+                    filewriterstream = new FileWriter("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\teste\\" + caracter + ".txt");
+                    filewriterstream.write(key + " - " + hm.get(key) + "\n");//appends the string to the file
+                    filewriterstream.close();
+                }*/
+   

@@ -47,6 +47,7 @@ public class Tokeneizer {
             //Adciona cada linha para o hashset
             StopWord.add(sCurrentLine); 
         }
+        br.close();
     }
 
     /**
@@ -69,51 +70,50 @@ public class Tokeneizer {
      * @param array
      * @throws IOException
      */
-    public void FromDocProcessor(ArrayList<String> array) throws IOException {
+    public ArrayList<String> FromDocProcessor(String line, int DocId) throws IOException {
         //Preenche o hashset primeiro antes desta função correr para nao criar problemas. 
         //Podia-se começar no principio do programa mas devido ao uso de arraylist no principio
         //penso que esta seja a melhor opção
         loadStoppingwords(); 
-        Iterator leitorArray = array.iterator(); //Percorrer o arraly list
-        while (leitorArray.hasNext()) {
-            String ID = null;
-            String line = (String) leitorArray.next(); 
+        
+        ArrayList<String> ar = new ArrayList<>();
+        
+        //Iterator leitorArray = array.iterator(); //Percorrer o arraly list
+       // while (leitorArray.hasNext()) {
+           // int id = DocId;
+         //   String line = (String) leitorArray.next(); 
             //Pra dividir os strings do arraylist pelo ',' 
-            String[] teste = line.split(",", 2); 
-            
+           // String[] teste = line.split(",", 2); 
+           // System.out.println("Doc recebido");
             //Dividir por tokens o parte do documento
-            StringTokenizer st = new StringTokenizer(teste[1].toLowerCase().replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", "").replaceAll("\\.", " ").replaceAll(" +", " ").trim());  //Elimina tudo menos os ' .
-            ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
+            StringTokenizer st = new StringTokenizer(line.replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ").replaceAll("\\.", " ").replaceAll(" +", " ").trim());  //Elimina tudo menos os ' .
+            //ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
            
+            
             while (st.hasMoreElements()) { //Corre se a string tokeneizer tiver mais elementos
                 String token = st.nextToken().trim();
+                
                 if (!StopWord.contains(token)) {//Verifica se o token é uma stopword ou não
-                    
                     String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", " ");//Elimina tags, o'connor para oconnor e I.B.M para ibm
                     String tokenStemmer=stemming(tokentratado);                 
-  
+                    
                     //Insere a string que foi recebida pelo stemmer e o id 
                     //do decumento na hashmap que se encontra na class indexer
-                    in.setHM(tokenStemmer, ID);
+                    //in.setHM(tokenStemmer, DocId);
+                    ar.add(tokenStemmer);
                 }
             }
-            //Esta condição irá correr sempre que o iterator chegar ao ultimo valor do array
-            if (!leitorArray.hasNext()) {
-                //Uma vez com a hashmap do indexer preenchida este metodo irá calcular a frequencia dos documentos para cada termo
-                //in.updateDocFrequency();
-                //Imprime a hashmap do indexer, para testes
-                //in.imprimir();
-                //in.checkMemory();
-                in.saveDisc(1);
-            }
-        }
+            
+           // in.saveDisc();
+          // System.out.println("arraylist devolvido");
+           return ar;
     }
     
-    public char getCharacter(String token){
+    /*public char getCharacter(String token){
         char[] aux = token.toCharArray();
         
         return aux[0];
-    }
+    }*/
 
     /**
      * Tratamento de palavras usando a biblioteca SnowballStemmer
