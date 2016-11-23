@@ -9,8 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
- * @author joaoa
+ * @author João Amaral
+ * @author Mafalda Rodrigues
  */
 public enum groups {
     GROUP_0("^[0-9]\\w*"),
@@ -49,7 +49,7 @@ public enum groups {
         return false;
     }
     
-    public static String getGroupInitiasl(groups abbr){
+    public static String getGroupInitial(groups abbr){
     for(groups g : values()){
         if(g.equals(abbr)){
             String[] teste = g.toString().split("_");

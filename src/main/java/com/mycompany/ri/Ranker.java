@@ -1,8 +1,8 @@
 package com.mycompany.ri;
 
 /**
- *
- * @author joaoa
+ * @author João Amaral
+ * @author Mafalda Rodrigues
  */
 public class Ranker {
   

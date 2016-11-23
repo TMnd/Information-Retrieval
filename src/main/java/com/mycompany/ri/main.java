@@ -6,8 +6,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author joaoa
+ * @author João Amaral
+ * @author Mafalda Rodrigues
  */
 public class main {
 
@@ -24,8 +24,7 @@ public class main {
         System.out.println("a ler");
         
         try {
-            cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\teste.zip");
-            //D:\OwnCloud\Documents\Universidade\Recuperação de Informação\corpus-RI.zip
+            cp.AnaliseFile("D:\\OwnCloud\\Documents\\Universidade\\Recuperação de Informação\\RI\\src\\main\\java\\com\\mycompany\\ri\\corpus-RI.zip");
         } catch (IOException ex) {
             Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
         }
