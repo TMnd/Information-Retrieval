@@ -16,14 +16,5 @@ import net.lingala.zip4j.core.ZipFile;
  * @author joaoa
  */
 public class CorpusReader {  
-    public String Unzip(String SourceZip){
-        String detination = SourceZip.substring(0, SourceZip.lastIndexOf("."));
-        try {    
-            ZipFile zipFile = new ZipFile(SourceZip);
-            zipFile.extractAll(detination);
-        } catch (ZipException ex) {
-            System.err.println("Falha na descompactação!");
-        }
-        return detination;
-    }
+   
 }
