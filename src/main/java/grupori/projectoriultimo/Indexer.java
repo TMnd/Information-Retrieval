@@ -30,7 +30,9 @@ public class Indexer {
     int cont5 = 0; //para os subindex conjuntos!
 
     Map<String, HashMap<Integer, Float>> hm = new HashMap<String, HashMap<Integer, Float>>();
-    static Map<String, HashMap<Integer, Float>> hm2 = new HashMap<>();
+    Map<String, HashMap<Integer, Float>> hm2 = new HashMap<String, HashMap<Integer, Float>>();
+   
+    
     Tokeneizer tk = new Tokeneizer();
     Runtime runtime = Runtime.getRuntime();
 
@@ -54,9 +56,9 @@ public class Indexer {
 
         Map<String, HashMap<Integer, Float>> tm = new TreeMap<String, HashMap<Integer, Float>>(hm);
        
-       // for (groups group : groups.values()) {
+        for (groups group : groups.values()) {
             try {
-                File f = new File("src\\main\\java\\grupori\\projectoriultimo\\indexs\\subindex" + (cont5++) + /* + groups.getGroupInitial(group) + cont +*/ ".txt");
+                File f = new File("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" /*+ (cont5++) +*/  + groups.getGroupInitial(group) + cont + ".txt");
                 f.createNewFile();
                 FileWriter fw = new FileWriter(f.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -64,9 +66,9 @@ public class Indexer {
                 for (Map.Entry<String, HashMap<Integer, Float>> parent : tm.entrySet()) {
                     String key = parent.getKey();
                     
-                    /*if (!group.matchesGroup(group, key)) {
+                    if (!group.matchesGroup(group, key)) {
                         continue;
-                    }*/
+                    }
 
                     String content = key;
 
@@ -87,37 +89,76 @@ public class Indexer {
             } catch (IOException ex) {
                 System.out.println("Ficheiro já existe");
             }
-        //}
+        }
         cont++;
     }
     
-        public static TreeMap<String, HashMap<Integer, Float>> carregarFicheiro(String ficheiro) throws IOException {
-        TreeMap<String, HashMap<Integer, Float>> tm = new TreeMap<>();
+    public static TreeMap<String, HashMap<Integer, Float>> carregarFicheiro(String ficheiro) throws IOException {
+        TreeMap<String, HashMap<Integer, Float>> tm = new TreeMap<>(); //tree temporaria para carregar o primeiro ficheiro de cada letra
         
         BufferedReader br = Files.newBufferedReader(java.nio.file.Paths.get(ficheiro), StandardCharsets.ISO_8859_1);
         for (String line; (line = br.readLine()) != null;) {
+          //  System.out.println("------------------");
             String[] termInfo = line.split(",");
-            String[] docInfo = termInfo[1].split(":");
-
             String term = termInfo[0];
-            int docId = Integer.parseInt(docInfo[0]);
-            float docFreq = Float.parseFloat(docInfo[1]);
-            tm.put(term, new HashMap<>());
-            tm.get(term).put(docId, docFreq);
+            for(int i=1;i<termInfo.length;i++){
+                String[] docInfo = termInfo[i].split(":");
+                int docId = Integer.parseInt(docInfo[0]);
+                float docFreq = Float.parseFloat(docInfo[1]);
+                
+                if(!tm.containsKey(term)){
+                    tm.put(term,new HashMap<>());
+                    tm.get(term).put(docId,docFreq);
+                }else if(!tm.get(term).containsKey(docId)){
+                    tm.get(term).put(docId,docFreq);
+                }else{
+                    tm.get(term).put(docId,docFreq);
+                }
+                //System.out.println("termInfo: "+ i + termInfo[i]);
+            }
+            
+          /*  String[] docInfo = termInfo[1].split(":");
+            for(int i=0;i<docInfo.length;i++){
+                //System.out.println("docInfo: " + docInfo[i]);
+                int docId = Integer.parseInt(docInfo[0]);
+                float docFreq = Float.parseFloat(docInfo[1]);
+            }*/
+            
+
+            
+            /*int docId = Integer.parseInt(docInfo[0]);
+            float docFreq = Float.parseFloat(docInfo[1]);*/
+            
+            /*if(!tm.containsKey(term)){
+                tm.put(term,new HashMap<>());
+                tm.get(term).put(docId,docFreq);
+            }else if(!tm.get(term).containsKey(docId)){
+                tm.get(term).put(docId,docFreq);
+            }else{
+                tm.get(term).put(docId,docFreq);
+            }*/
+           /* tm.put(term, new HashMap<>());
+            tm.get(term).put(docId, docFreq);*/
         }
         br.close();
+        
+       // System.out.println(tm);
         return tm;
     }
         
-        private static void fusaoIndex(TreeMap<String, HashMap<Integer, Float>> termMapToMerge) {
+    private void fusaoIndex(TreeMap<String, HashMap<Integer, Float>> termMapToMerge) {
         for(Map.Entry<String, HashMap<Integer, Float>> parent : termMapToMerge.entrySet()){
             String key = parent.getKey();
+            //System.out.println("key: " + key);
             for(Entry<Integer, Float> child : termMapToMerge.get(key).entrySet()){
                 int subKey = child.getKey();   
+                //System.out.println("subkey: " + subKey);
                 if(!hm2.containsKey(key)){
                     hm2.put(key, new HashMap<Integer, Float>());
                     hm2.get(key).put(subKey, termMapToMerge.get(key).get(subKey));
-                }else{
+                }/*else if(!hm.get(key).containsKey(subKey)){
+                    hm2.get(key).put(subKey, termMapToMerge.get(key).get(subKey));
+                }*/else{
                     hm2.get(key).put(subKey, termMapToMerge.get(key).get(subKey));
                 }
             }
@@ -125,25 +166,34 @@ public class Indexer {
     }
 
     public void reduçãoIndex() throws IOException {
-        for (int i = 0; i < cont5 ; i++) {
-            fusaoIndex(carregarFicheiro("src\\main\\java\\grupori\\projectoriultimo\\indexs\\subindex" + i + ".txt"));
-        }    
-        for (int i = 0; i < cont5; i++) {
-            Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\indexs\\subindex" + i + ".txt"));
+        for (groups group : groups.values()) {
+            for(int i=0;i<cont;i++){
+                fusaoIndex(carregarFicheiro("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" + group.getGroupInitial(group)+ i + ".txt"));
+            }
+            EscreverGrupos(group);
+            for (int i = 0; i < cont; i++) {
+                Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" + group.getGroupInitial(group)+ i + ".txt"));
+            }
         }
+               
+        /*for (int i = 0; i < cont5; i++) {
+            Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\indexs\\subindex" + i + ".txt"));
+        }*/
         //Efectuar os calculos
         //System.out.println("a calcular");
        // calculos();
         //criar ficheiros
-        System.out.println("merging time");
-        System.out.println(hm2);
-        EscreverGrupos();
+        //System.out.println("merging time");
+        //System.out.println(hm2);
+        //EscreverGrupos();
     }
     
-    private void EscreverGrupos() {
-        System.out.println("Creating final index...");
+    private void EscreverGrupos(groups group) {
+        //System.out.println("teste: " + group.getGroupInitial(group));
+        //System.out.println("Creating final index...");
+        //System.out.println(hm2);
         try {
-            for (groups group : groups.values()) {
+            //for (groups group : groups.values()) {
                 File file = new File("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" + group.getGroupInitial(group) + ".txt");
                 file.createNewFile();
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
@@ -152,9 +202,9 @@ public class Indexer {
                 for (Map.Entry<String, HashMap<Integer, Float>> parent : hm2.entrySet()) {
                     String Key = parent.getKey();
 
-                    if (!group.matchesGroup(group, Key)) {
+                    /*if (!group.matchesGroup(group, Key)) {
                         continue;
-                    }
+                    }*/
 
                     String linha = Key;
 
@@ -168,14 +218,38 @@ public class Indexer {
                     bw.write(linha);
                 }
                 bw.close();
-            }
-            hm2.clear();
-            hm.clear();
-            System.gc();
+          //  }
+            
         } catch (IOException e) {
             System.err.println("Erro ao criar o ficheiro do index!");
         }
-    } 
+    }
+    
+    public void calculos(){
+        for(Map.Entry<String,HashMap<Integer,Float>> parent: hm.entrySet()){
+            float wTotal = 0;
+            float somatorioRaizQuadrada;
+            float calculo = 0;
+            String key = parent.getKey();
+            
+            for(Map.Entry<Integer, Float> child: hm.get(key).entrySet()){
+                int subKey = child.getKey();
+                
+                if(hm.get(key).get(subKey) != null){
+                    wTotal += Math.pow(hm.get(key).get(subKey),2);
+                }
+            }
+            somatorioRaizQuadrada = (float) Math.sqrt(wTotal);
+            for(Map.Entry<Integer, Float> child: hm.get(key).entrySet()){
+                int subKey = child.getKey();
+                calculo = (float) ((1 + Math.log(hm.get(key).get(subKey)))/somatorioRaizQuadrada);
+                hm.get(key).put(subKey,calculo); 
+            }
+        }
+        hm2.clear();
+        hm.clear();
+        System.gc();
+    }
 
     public void memory() {
         tk.clearAr();

@@ -87,7 +87,40 @@ public class DocProcessor {
            }
         }
     }    
-     
+        /*if(listOfFiles.length > 1){
+            if (listOfFiles[0].isFile()) {
+                   if(listOfFiles[0].getName().endsWith(".arff")){
+                       //parse do arff
+                       parseArff(listOfFiles[0]);
+                   }else{
+                       System.out.println("csv");
+                       //parse do csv
+                       parseCSV(listOfFiles[0]);
+                   }
+                }else if (listOfFiles[0].isDirectory()) {
+                    if(listOfFiles[0].getName() != "__MACOSX"){
+                        readPath(SourceZip+"\\" +listOfFiles[0].getName());
+                    }
+                }
+        }else{
+            for (int i = 0; i < listOfFiles.length; i++) {
+                //System.out.println(listOfFiles[i]);
+                if (listOfFiles[i].isFile()) {
+                   if(listOfFiles[i].getName().endsWith(".arff")){
+                       //parse do arff
+                       parseArff(listOfFiles[i]);
+                   }else{
+                       System.out.println("csv");
+                       //parse do csv
+                       parseCSV(listOfFiles[i]);
+                   }
+                }else if (listOfFiles[i].isDirectory()) {
+                    if(listOfFiles[i].getName() != "__MACOSX"){
+                        readPath(SourceZip+"\\" +listOfFiles[i].getName());
+                    }
+                }
+            }
+        }*/
     
     private void parseArff(File caminhoFicheiro){
         System.out.println("entrou no csv");
@@ -140,7 +173,7 @@ public class DocProcessor {
         parserSettings.selectFields("Id", "Body");
        // parserSettings.setSkipEmptyLines(true);
         //5000 em 5000 linhas grava ou faz algo    
-        parserSettings.setNumberOfRecordsToRead(3000);//3000);
+        parserSettings.setNumberOfRecordsToRead(1000);//3000);
         CsvParser parser = new CsvParser(parserSettings);
         
         try{
