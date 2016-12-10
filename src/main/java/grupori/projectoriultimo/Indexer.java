@@ -170,6 +170,7 @@ public class Indexer {
             for(int i=0;i<cont;i++){
                 fusaoIndex(carregarFicheiro("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" + group.getGroupInitial(group)+ i + ".txt"));
             }
+            calculos();
             EscreverGrupos(group);
             for (int i = 0; i < cont; i++) {
                 Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" + group.getGroupInitial(group)+ i + ".txt"));
@@ -188,12 +189,8 @@ public class Indexer {
         //EscreverGrupos();
     }
     
-    private void EscreverGrupos(groups group) {
-        //System.out.println("teste: " + group.getGroupInitial(group));
-        //System.out.println("Creating final index...");
-        //System.out.println(hm2);
+    private void EscreverGrupos(groups group) { //Em base de multiplos subs-indexs.
         try {
-            //for (groups group : groups.values()) {
                 File file = new File("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" + group.getGroupInitial(group) + ".txt");
                 file.createNewFile();
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
@@ -201,10 +198,6 @@ public class Indexer {
 
                 for (Map.Entry<String, HashMap<Integer, Float>> parent : hm2.entrySet()) {
                     String Key = parent.getKey();
-
-                    /*if (!group.matchesGroup(group, Key)) {
-                        continue;
-                    }*/
 
                     String linha = Key;
 
@@ -223,32 +216,33 @@ public class Indexer {
         } catch (IOException e) {
             System.err.println("Erro ao criar o ficheiro do index!");
         }
+        hm2.clear();
+        hm.clear();
+        System.gc();
     }
     
     public void calculos(){
-        for(Map.Entry<String,HashMap<Integer,Float>> parent: hm.entrySet()){
+        for(Map.Entry<String,HashMap<Integer,Float>> parent: hm2.entrySet()){
             float wTotal = 0;
             float somatorioRaizQuadrada;
             float calculo = 0;
             String key = parent.getKey();
             
-            for(Map.Entry<Integer, Float> child: hm.get(key).entrySet()){
+            for(Map.Entry<Integer, Float> child: hm2.get(key).entrySet()){
                 int subKey = child.getKey();
                 
-                if(hm.get(key).get(subKey) != null){
-                    wTotal += Math.pow(hm.get(key).get(subKey),2);
+                if(hm2.get(key).get(subKey) != null){
+                    wTotal += Math.pow(hm2.get(key).get(subKey),2);
                 }
             }
             somatorioRaizQuadrada = (float) Math.sqrt(wTotal);
-            for(Map.Entry<Integer, Float> child: hm.get(key).entrySet()){
+            for(Map.Entry<Integer, Float> child: hm2.get(key).entrySet()){
                 int subKey = child.getKey();
-                calculo = (float) ((1 + Math.log(hm.get(key).get(subKey)))/somatorioRaizQuadrada);
-                hm.get(key).put(subKey,calculo); 
+                calculo = (float) ((1 + Math.log(hm2.get(key).get(subKey)))/somatorioRaizQuadrada);
+                hm2.get(key).put(subKey,calculo); 
             }
         }
-        hm2.clear();
-        hm.clear();
-        System.gc();
+
     }
 
     public void memory() {
