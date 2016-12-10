@@ -14,6 +14,7 @@ public class ProgramaRI {
     public static void main(String[] args) {
         DocProcessor dp = new DocProcessor();
         Tokeneizer tk = new Tokeneizer();
+        Seacher sea = new Seacher();
         
         Scanner sc = new Scanner(System.in);
         
@@ -57,8 +58,11 @@ public class ProgramaRI {
             System.out.println("nao e zip");
             try {
                 dp.readPath(caminhoFicheiroComprimido);
-                //System.out.println(caminhoFicheiroComprimido);
-                System.out.println("O programa continua");
+                System.out.println("Indexação Completa!");
+                System.out.println("Insira o termo que deseja procurar:");
+                if(sea.seacher(sc.nextLine())){
+                    sea.getMap();
+                }
             } catch (IOException ex) {
                 System.out.println("Ficheiro nao detctado");
             }

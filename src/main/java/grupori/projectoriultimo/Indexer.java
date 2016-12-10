@@ -26,15 +26,13 @@ import java.nio.file.Files;
  * @author joaoa
  */
 public class Indexer {
+    Tokeneizer tk = new Tokeneizer();
+    Runtime runtime = Runtime.getRuntime();
     int cont = 0;
     int cont5 = 0; //para os subindex conjuntos!
 
     Map<String, HashMap<Integer, Float>> hm = new HashMap<String, HashMap<Integer, Float>>();
     Map<String, HashMap<Integer, Float>> hm2 = new HashMap<String, HashMap<Integer, Float>>();
-   
-    
-    Tokeneizer tk = new Tokeneizer();
-    Runtime runtime = Runtime.getRuntime();
 
     public void addTM(ArrayList<String> ar, int DocId) {
         for (int i = 0; i < ar.size(); i++) {
@@ -53,7 +51,6 @@ public class Indexer {
     }
 
     public void saveDisc() {
-
         Map<String, HashMap<Integer, Float>> tm = new TreeMap<String, HashMap<Integer, Float>>(hm);
        
         for (groups group : groups.values()) {
@@ -114,51 +111,21 @@ public class Indexer {
                 }else{
                     tm.get(term).put(docId,docFreq);
                 }
-                //System.out.println("termInfo: "+ i + termInfo[i]);
-            }
-            
-          /*  String[] docInfo = termInfo[1].split(":");
-            for(int i=0;i<docInfo.length;i++){
-                //System.out.println("docInfo: " + docInfo[i]);
-                int docId = Integer.parseInt(docInfo[0]);
-                float docFreq = Float.parseFloat(docInfo[1]);
-            }*/
-            
-
-            
-            /*int docId = Integer.parseInt(docInfo[0]);
-            float docFreq = Float.parseFloat(docInfo[1]);*/
-            
-            /*if(!tm.containsKey(term)){
-                tm.put(term,new HashMap<>());
-                tm.get(term).put(docId,docFreq);
-            }else if(!tm.get(term).containsKey(docId)){
-                tm.get(term).put(docId,docFreq);
-            }else{
-                tm.get(term).put(docId,docFreq);
-            }*/
-           /* tm.put(term, new HashMap<>());
-            tm.get(term).put(docId, docFreq);*/
+            }   
         }
         br.close();
-        
-       // System.out.println(tm);
         return tm;
     }
         
     private void fusaoIndex(TreeMap<String, HashMap<Integer, Float>> termMapToMerge) {
         for(Map.Entry<String, HashMap<Integer, Float>> parent : termMapToMerge.entrySet()){
             String key = parent.getKey();
-            //System.out.println("key: " + key);
             for(Entry<Integer, Float> child : termMapToMerge.get(key).entrySet()){
                 int subKey = child.getKey();   
-                //System.out.println("subkey: " + subKey);
                 if(!hm2.containsKey(key)){
                     hm2.put(key, new HashMap<Integer, Float>());
                     hm2.get(key).put(subKey, termMapToMerge.get(key).get(subKey));
-                }/*else if(!hm.get(key).containsKey(subKey)){
-                    hm2.get(key).put(subKey, termMapToMerge.get(key).get(subKey));
-                }*/else{
+                }else{
                     hm2.get(key).put(subKey, termMapToMerge.get(key).get(subKey));
                 }
             }
@@ -175,18 +142,7 @@ public class Indexer {
             for (int i = 0; i < cont; i++) {
                 Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" + group.getGroupInitial(group)+ i + ".txt"));
             }
-        }
-               
-        /*for (int i = 0; i < cont5; i++) {
-            Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\indexs\\subindex" + i + ".txt"));
-        }*/
-        //Efectuar os calculos
-        //System.out.println("a calcular");
-       // calculos();
-        //criar ficheiros
-        //System.out.println("merging time");
-        //System.out.println(hm2);
-        //EscreverGrupos();
+        }  
     }
     
     private void EscreverGrupos(groups group) { //Em base de multiplos subs-indexs.
