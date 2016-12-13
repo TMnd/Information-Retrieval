@@ -20,16 +20,19 @@ import grupori.projectoriultimo.groups;
 import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
  * @author joaoa
  */
 public class Indexer {
-    Tokeneizer tk = new Tokeneizer();
+   // Tokeneizer tk = new Tokeneizer();
     Runtime runtime = Runtime.getRuntime();
     int cont = 0;
     int cont5 = 0; //para os subindex conjuntos!
+    ArrayList<String> teste = null;
 
     Map<String, HashMap<Integer, Float>> hm = new HashMap<String, HashMap<Integer, Float>>();
     Map<String, HashMap<Integer, Float>> hm2 = new HashMap<String, HashMap<Integer, Float>>();
@@ -48,14 +51,75 @@ public class Indexer {
                 hm.get(key).put(DocId, frequencia);
             }
         }
+       // System.out.println(hm);
     }
 
-    public void saveDisc() {
-        Map<String, HashMap<Integer, Float>> tm = new TreeMap<String, HashMap<Integer, Float>>(hm);
+    public void saveDisc() throws IOException {
+        ArrayList<String> terms = new ArrayList<>(hm.keySet());
+        Collections.sort(terms, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return s1.compareToIgnoreCase(s2);
+            }
+        });
+        
+        //System.out.println(terms);
+        
+        String aux_group = "";
+        BufferedWriter bw = null;
+        
+        for (String term : terms) {
+            if(!term.isEmpty()){
+                //System.out.println("termo: " + term);
+                String group = getGroup(term);
+               // System.out.println("group: " + group);
+                if (!group.equals(aux_group)) {
+                  //  System.out.println("Entrou no primeiro if(positico");
+                    if (bw != null) {
+                    //    System.out.println("Vai chegar o ficheiro");
+                        bw.close();
+                    }
+                    File file = new File("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" + group + cont + ".txt");
+                    file.createNewFile();
+                    FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                    bw = new BufferedWriter(fw);
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.append(term);
+               // System.out.println("append antes do for: " + sb);
+                for (Map.Entry<Integer, Float> child : hm.get(term).entrySet()) {
+                    Integer cKey = child.getKey();
+                    float cValue = child.getValue();
+
+                    sb.append(",").append(cKey).append(":").append(cValue);
+                }
+               // System.out.println("appenc depois do for: " + sb);
+                sb.append(System.lineSeparator());
+                bw.write(sb.toString());
+                aux_group = group;
+            }
+        }
+        bw.close();
+        cont++;
+    }
+    
+    public String getGroup(String term) {
+        char[] InicialTerm = term.toCharArray();
+        String iTerm = "" + InicialTerm[0];
+        for (groups group : groups.values()) {
+            if (group.matchesGroup(group, iTerm)) {
+                return group.getGroupInitial(group);
+            }
+        }
+        return null;
+    }
+
+        /*Map<String, HashMap<Integer, Float>> tm = new TreeMap<String, HashMap<Integer, Float>>(hm);
        
         for (groups group : groups.values()) {
             try {
-                File f = new File("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" /*+ (cont5++) +*/  + groups.getGroupInitial(group) + cont + ".txt");
+                File f = new File("src\\main\\java\\grupori\\projectoriultimo\\indexs\\" /*+ (cont5++) +*/  /*+ groups.getGroupInitial(group) + cont + ".txt");
                 f.createNewFile();
                 FileWriter fw = new FileWriter(f.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -86,9 +150,8 @@ public class Indexer {
             } catch (IOException ex) {
                 System.out.println("Ficheiro já existe");
             }
-        }
-        cont++;
-    }
+        }*/
+    
     
     public static TreeMap<String, HashMap<Integer, Float>> carregarFicheiro(String ficheiro) throws IOException {
         TreeMap<String, HashMap<Integer, Float>> tm = new TreeMap<>(); //tree temporaria para carregar o primeiro ficheiro de cada letra
@@ -200,20 +263,28 @@ public class Indexer {
         }
 
     }
+    
+    
 
-    public void memory() {
-        tk.clearAr();
+    public void memory(int contas) throws IOException {
+        //tk.clearAr();
+        
 
-        long totalfreememory = runtime.freeMemory() + (runtime.maxMemory() - runtime.totalMemory());
-        long usedMem = 100 * (runtime.maxMemory() - totalfreememory) / runtime.maxMemory();
+        /*long totalfreememory = runtime.freeMemory() + (runtime.maxMemory() - runtime.totalMemory());
+        long usedMem = 100 * (runtime.maxMemory() - totalfreememory) / runtime.maxMemory();*/
 
-        if (usedMem > 70) {
+        //if (usedMem > 70) {
+          if ( 100.0 * (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Runtime.getRuntime().maxMemory() > 70){
             System.out.println("A gravar os ficheiros...");
+           // System.out.println("arraylist: " + tk.getAr());
+            System.out.println("numero de doc lidos: " + contas);
             saveDisc();
             System.out.println("Limpar memoria");
             hm.clear();
+            //tk.setAux(true);
             Runtime.getRuntime().gc();
-            if (usedMem > 20) {
+            //if (usedMem > 20) {
+            if ( 100.0 * (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Runtime.getRuntime().maxMemory() > 20){
                 System.gc();
             }
         }

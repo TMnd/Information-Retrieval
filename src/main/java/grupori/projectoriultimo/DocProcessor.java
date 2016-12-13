@@ -10,6 +10,7 @@ import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -25,6 +27,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  *
@@ -37,6 +42,9 @@ public class DocProcessor {
     //HashSet<String> hs = new HashSet<String>();
     HashMap<Integer, String> map = new HashMap<>();
     int contEnviarDoc = 0;
+    
+    FileInputStream fis = null;
+    CSVParser parser;
             
     Runtime runtime = Runtime.getRuntime();
     
@@ -68,6 +76,7 @@ public class DocProcessor {
     
     public void readPath(String SourceZip) throws IOException{
         System.out.println("entrou");
+        StringBuilder texto = null;
         File folder;
         if(SourceZip.endsWith(".zip")){
             folder = new File(Unzip(SourceZip));
@@ -82,8 +91,38 @@ public class DocProcessor {
                //parse arff
                parseArff(listOfFiles[i]);
            }else{
-               System.out.println("é um ficheiro .csv");
-               parseCSV(listOfFiles[i]);
+                System.out.println("é um ficheiro .csv");
+                //parseCSV(listOfFiles[i]);
+                fis = new FileInputStream(listOfFiles[i]);
+                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                parser = new CSVParser(br, CSVFormat.DEFAULT.withHeader());
+                Iterator it = parser.iterator();
+
+                while(it.hasNext()){
+                    texto = new StringBuilder();
+                    contEnviarDoc++;
+                    CSVRecord record = (CSVRecord) it.next();
+                    int idDoc = Integer.parseInt(record.get("Id"));
+
+                    if(!fis.toString().contains("Tags")){
+
+                        String aux;
+//line[1].replaceAll("(?s)<pre>.*?</pre>", " ").replaceAll("(?s)<code>.*?</code>", " ").replaceAll("\\<[^>]*>", " ").replaceAll("\t", " ").replaceAll("\n", " ").replaceAll(" +", " ");
+                        if(record.isMapped("Title") && record.isMapped("Body")){
+                            texto.append(record.get("Title"));
+                            texto.append(" ");
+                            texto.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
+                        }else {
+                            texto.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
+                        }
+
+                        aux = texto.toString().toLowerCase();
+                        //String texto_tratado = tokenizer.removeStrangeChars(aux);
+
+                        id.memory(contEnviarDoc);
+                        id.addTM(tk.receberDocumento(aux), idDoc);
+                    }
+                }
            }
         }
     }    
@@ -126,20 +165,36 @@ public class DocProcessor {
     }
     
     private String parseCSV(File caminhoFicheiro){
-        System.out.println("entrou no parcecsv");
+        /*System.out.println("entrou no parcecsv");
+        
+        StringBuilder sbb = new StringBuilder();
+        
+        CsvParserSettings settings =  new CsvParserSettings();
+        settings.getFormat().setLineSeparator("\n");
+        
+        CsvParser parser = new CsvParser(settings);
+        
+        parser.beginParsing(caminhoFicheiro);
+        
+        String[] row;
+        while((row = parser.parseNext()) != null){
+            
+        }*/
+        
+        
         
         CsvParserSettings parserSettings = new CsvParserSettings();
-        //parserSettings.getFormat().setLineSeparator("\n");
-        parserSettings.setLineSeparatorDetectionEnabled(true);
+        parserSettings.getFormat().setLineSeparator("\n");
+        //parserSettings.setLineSeparatorDetectionEnabled(true);
         parserSettings.setMaxCharsPerColumn(60000);
         RowListProcessor rowProcessor = new RowListProcessor();
         parserSettings.setRowProcessor(rowProcessor);
         parserSettings.setHeaderExtractionEnabled(true);
-        parserSettings.setReadInputOnSeparateThread(true);
-        parserSettings.selectFields("Id", "Body");
-       // parserSettings.setSkipEmptyLines(true);
+       //parserSettings.setReadInputOnSeparateThread(true);
+        parserSettings.selectFields("Id","Title","Body");
+        parserSettings.setSkipEmptyLines(true);
         //5000 em 5000 linhas grava ou faz algo    
-        parserSettings.setNumberOfRecordsToRead(1000);//3000);
+        //parserSettings.setNumberOfRecordsToRead();//3000);
         CsvParser parser = new CsvParser(parserSettings);
         
         try{
@@ -155,10 +210,10 @@ public class DocProcessor {
                     try{
                        // System.out.println("2");
                         int key = Integer.parseInt(line[0]);
-                        //String value = line[1].replaceAll("(?s)<pre>.*?</pre>", " ").replaceAll("(?s)<code>.*?</code>", " ").replaceAll("\\<[^>]*>", " ").replaceAll("\t", " ").replaceAll("\n", " ").replaceAll(" +", " ");
-                        String value = ola3(ola2(ola(line[1])));//line[1].replaceAll("\\<[^>]*>", "").replaceAll("[^a-zA-Z0-9]", " ").replaceAll("\\s+", " ").trim();
-                        //
-                        id.memory();
+                        String value = line[1].replaceAll("(?s)<pre>.*?</pre>", "").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","");
+                        //String value = ola3(ola2(ola(line[1])));//line[1].replaceAll("\\<[^>]*>", "").replaceAll("[^a-zA-Z0-9]", " ").replaceAll("\\s+", " ").trim();
+                        
+                        
                         
                         if(value.length() != 0){
                           // System.out.println("3");
@@ -166,11 +221,12 @@ public class DocProcessor {
                 //hs.put(value);
                             //System.out.println(key);
                          //  System.out.println(value);
-                          //  contEnviarDoc++;
+                            contEnviarDoc++;
                           //  System.out.println("a enviar o documento: " + contEnviarDoc);
                             id.addTM(tk.receberDocumento(value),key);
                         }
-                       
+                        
+                       id.memory(contEnviarDoc);
                         //System.out.println("LASTPART:" +lastPart);
                         //System.out.println("NEXT:" +value);
                         //System.out.println("ID:"+key);

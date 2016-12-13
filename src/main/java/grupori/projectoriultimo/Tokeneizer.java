@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.StringTokenizer;
-/*import org.tartarus.snowball.ext.englishStemmer;
-import org.tartarus.snowball.SnowballStemmer;*/
+import org.tartarus.snowball.ext.englishStemmer;
+import org.tartarus.snowball.SnowballStemmer;
 
 /**
  *
@@ -21,7 +21,11 @@ import org.tartarus.snowball.SnowballStemmer;*/
  */
 public class Tokeneizer {
     private final HashSet<String> StopWord = new HashSet<>();
-    ArrayList<String> ar = new ArrayList<>();
+    Indexer id = new Indexer();
+    
+    SnowballStemmer snowballStemmer = new englishStemmer();
+    //ArrayList<String> ar = new ArrayList<String>();
+    ArrayList<String> ar = null;
     boolean aux = false;
     
     public void LoadStopWords(String url) throws IOException{
@@ -45,7 +49,7 @@ public class Tokeneizer {
     }
     
     //Limpar o arraylist que ira conter os tokens
-    public void clearAr(){
+    /*public void clearAr(ArrayList<String> ar){
        // System.out.println("entrou no clearAR");
       //  System.out.println("antes de apagar: " + ar.size()); //a primeira passagem sera NULL!
         //System.out.println("11");
@@ -59,37 +63,70 @@ public class Tokeneizer {
                 System.out.println("nao tem nada para limpar");
             }
         }
+    }*/
+
+   /* public ArrayList<String> getAr() {
+        return ar;
+    }*/
+    
+    
+
+    public static void setAr(ArrayList<String> ar) {
+        System.out.println("antes: " + ar.size());
+      //  Tokeneizer.ar = ar;
+        System.out.println("depois: " + ar.size());
     }
     
-    public ArrayList<String> receberDocumento(String line) throws IOException {  
-        //System.out.println("a tokenizar");
-       // if(aux){
-            //System.out.println("clear");
-            //ar.clear();
-         //   System.gc();
-      //  }
+    public ArrayList<String> receberDocumento(String line) throws IOException { 
+        ar = new ArrayList<>();
+      /*
+        //# SPLIT #
+        String[] splitLine = line.split("\\s");
+        
+        for(int i=0; i<splitLine.length;i++){
+            String tokenTratado = CheckSpecialCases(splitLine[i].replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").
+                replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ").replaceAll("\\.", " ").replaceAll(" +", " ").trim());
+            if (!StopWord.contains(tokenTratado)) {
+                //Passa o token pelo stemmer e pelo stemmer
+                String tokentratado = CheckSpecialCases(tokenTratado);
+                //String tokenStemmer=stemming(tokentratado);                 
+                    
+                //Insere o token já tratado num arraylist
+                ar.add(tokentratado);
+               
+            }
+        }
+        return ar;*/
+        
         //Dividir por tokens o parte do documento
         StringTokenizer st = new StringTokenizer(line.replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").
                 replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ").replaceAll("\\.", " ").replaceAll(" +", " ").trim()); 
-        //ID = teste[0]; //Para guardar em variavel o id do doc para que possa ser usado depois
-               
+       
+        
         while (st.hasMoreElements()) { //Corre se a string tokeneizer tiver mais elementos
             String token = st.nextToken().trim();
                 
             //Verifica se o token é uma stopword ou não    
             if (!StopWord.contains(token)) {
                 //Passa o token pelo stemmer e pelo stemmer
-                String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", " ");
-                //String tokenStemmer=stemming(tokentratado);                 
+                String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", " ").replace(" ", "").replace("_","");
+                String tokenStemmer=stemming(tokentratado);                 
                     
                 //Insere o token já tratado num arraylist
-                ar.add(tokentratado);
+                ar.add(tokenStemmer);
+               
             }
         }
         //Devolve o arraylist já preenchido de tokens
-        aux = true;
         return ar;
+        
     }
+
+    public void setAux(boolean aux) {
+        this.aux = aux;
+    }
+    
+    
     
     public String CheckSpecialCharacters(String text){
         return text.replaceAll("<\\d>|<\\\\\\d>", " ").replaceAll(" +", " ");
@@ -100,13 +137,12 @@ public class Tokeneizer {
       return text.replaceAll("\\b'\\b", "").replaceAll(" +", " "); ///DONE
     }
     
-  /*  public String stemming(String word) {
-       
+    public String stemming(String word) {
         snowballStemmer.setCurrent(word);
 
         snowballStemmer.stem();
         
         return snowballStemmer.getCurrent();
 
-    }*/
+    }
 }
