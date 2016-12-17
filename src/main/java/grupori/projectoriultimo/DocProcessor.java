@@ -43,6 +43,7 @@ public class DocProcessor {
     HashMap<Integer, String> map = new HashMap<>();
     int contEnviarDoc = 0;
     
+    StringBuilder texto = null;
     FileInputStream fis = null;
     CSVParser parser;
             
@@ -76,7 +77,7 @@ public class DocProcessor {
     
     public void readPath(String SourceZip) throws IOException{
         System.out.println("entrou");
-        StringBuilder texto = null;
+
         File folder;
         if(SourceZip.endsWith(".zip")){
             folder = new File(Unzip(SourceZip));
@@ -91,40 +92,20 @@ public class DocProcessor {
                //parse arff
                parseArff(listOfFiles[i]);
            }else{
-                System.out.println("é um ficheiro .csv");
-                //parseCSV(listOfFiles[i]);
-                fis = new FileInputStream(listOfFiles[i]);
-                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-                parser = new CSVParser(br, CSVFormat.DEFAULT.withHeader());
-                Iterator it = parser.iterator();
-
-                while(it.hasNext()){
-                    texto = new StringBuilder();
-                    contEnviarDoc++;
-                    CSVRecord record = (CSVRecord) it.next();
-                    int idDoc = Integer.parseInt(record.get("Id"));
-
-                    if(!fis.toString().contains("Tags")){
-
-                        String aux;
-//line[1].replaceAll("(?s)<pre>.*?</pre>", " ").replaceAll("(?s)<code>.*?</code>", " ").replaceAll("\\<[^>]*>", " ").replaceAll("\t", " ").replaceAll("\n", " ").replaceAll(" +", " ");
-                        if(record.isMapped("Title") && record.isMapped("Body")){
-                            texto.append(record.get("Title"));
-                            texto.append(" ");
-                            texto.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
-                        }else {
-                            texto.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
-                        }
-
-                        aux = texto.toString().toLowerCase();
-                        //String texto_tratado = tokenizer.removeStrangeChars(aux);
-
-                        id.memory(contEnviarDoc);
-                        id.addTM(tk.receberDocumento(aux), idDoc);
-                    }
-                }
+                System.out.println("Ficheiro: " + listOfFiles[i].toString());
+                parseCSV(listOfFiles[i]);
+                //parseCSV_antigo(folder);
+                /*System.out.println("Change file");
+                id.saveDisc();
+                id.finalwhipe(contEnviarDoc);*/
            }
         }
+        System.out.println("Last save");
+        id.saveDisc();
+        System.out.println("Final Wipe!");
+        id.finalwhipe(contEnviarDoc);
+       /* System.out.println("Merge...");
+        id.reduçãoIndex();*/
     }    
     
     private void parseArff(File caminhoFicheiro){
@@ -164,7 +145,38 @@ public class DocProcessor {
         }
     }
     
-    private String parseCSV(File caminhoFicheiro){
+    private void parseCSV(File caminhoFicheiro) throws FileNotFoundException, IOException{
+        fis = new FileInputStream(caminhoFicheiro);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+        parser = new CSVParser(br, CSVFormat.DEFAULT.withHeader());
+        Iterator it = parser.iterator();
+
+        while(it.hasNext()){
+            texto = new StringBuilder();
+            contEnviarDoc++;
+            CSVRecord record = (CSVRecord) it.next();
+            int idDoc = Integer.parseInt(record.get("Id"));
+
+            if(!fis.toString().contains("Tags")){
+
+            String aux;
+                if(record.isMapped("Title") && record.isMapped("Body")){
+                    texto.append(record.get("Title"));
+                    texto.append(" ");
+                    texto.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
+                }else {
+                    texto.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
+                }
+
+                aux = texto.toString().toLowerCase();
+
+                id.addTM(tk.receberDocumento(aux), idDoc);
+                id.memory(contEnviarDoc);
+            }
+        }
+    }
+    
+    private String parseCSV_antigo(File caminhoFicheiro){
         /*System.out.println("entrou no parcecsv");
         
         StringBuilder sbb = new StringBuilder();

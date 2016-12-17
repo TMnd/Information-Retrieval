@@ -1,0 +1,6 @@
+az, a6:2.0
+abc, abc6:2.0
+adf, adf6:2.0
+adfe, adfe6:2.0
+adfef, adfef6:2.0
+adfefg, adfefg6:2.0, adfefg61:3.0

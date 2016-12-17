@@ -59,10 +59,10 @@ public class ProgramaRI {
             try {
                 dp.readPath(caminhoFicheiroComprimido);
                 System.out.println("Indexação Completa!");
-                System.out.println("Insira o termo que deseja procurar:");
+                /*System.out.println("Insira o termo que deseja procurar:");
                 if(sea.seacher(sc.nextLine())){
                     sea.getMap();
-                }
+                }*/
             } catch (IOException ex) {
                 System.out.println("Ficheiro nao detctado");
             }

@@ -69,38 +69,13 @@ public class Tokeneizer {
         return ar;
     }*/
     
-    
-
-    public static void setAr(ArrayList<String> ar) {
-        System.out.println("antes: " + ar.size());
-      //  Tokeneizer.ar = ar;
-        System.out.println("depois: " + ar.size());
-    }
-    
     public ArrayList<String> receberDocumento(String line) throws IOException { 
         ar = new ArrayList<>();
-      /*
-        //# SPLIT #
-        String[] splitLine = line.split("\\s");
-        
-        for(int i=0; i<splitLine.length;i++){
-            String tokenTratado = CheckSpecialCases(splitLine[i].replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").
-                replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ").replaceAll("\\.", " ").replaceAll(" +", " ").trim());
-            if (!StopWord.contains(tokenTratado)) {
-                //Passa o token pelo stemmer e pelo stemmer
-                String tokentratado = CheckSpecialCases(tokenTratado);
-                //String tokenStemmer=stemming(tokentratado);                 
-                    
-                //Insere o token já tratado num arraylist
-                ar.add(tokentratado);
-               
-            }
-        }
-        return ar;*/
         
         //Dividir por tokens o parte do documento
-        StringTokenizer st = new StringTokenizer(line.replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").
-                replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ").replaceAll("\\.", " ").replaceAll(" +", " ").trim()); 
+      /*  StringTokenizer st = new StringTokenizer(line.replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").
+                replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ").replaceAll("\\.", " ").replaceAll(" +", " ").trim()); */
+        StringTokenizer st = new StringTokenizer(parseEndOfSentence(parseSpecialCharacters(parseAcronyms(parseDecimalNumbers(line)))));
        
         
         while (st.hasMoreElements()) { //Corre se a string tokeneizer tiver mais elementos
@@ -109,7 +84,8 @@ public class Tokeneizer {
             //Verifica se o token é uma stopword ou não    
             if (!StopWord.contains(token)) {
                 //Passa o token pelo stemmer e pelo stemmer
-                String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", " ").replace(" ", "").replace("_","");
+                String tokentratado = CheckSpecialCases(token).replaceAll("\\'", " ").replaceAll(" +", "").replace(" ", "").replaceAll(">","").replace("<", "").toLowerCase();
+                //String tokentratado = CheckSpecialCharacters(parseTags(parseDecimalNumbers(parseAcronyms(parseSpecialCharacters(parseEndOfSentence(token))))));
                 String tokenStemmer=stemming(tokentratado);                 
                     
                 //Insere o token já tratado num arraylist
@@ -121,22 +97,38 @@ public class Tokeneizer {
         return ar;
         
     }
-
-    public void setAux(boolean aux) {
-        this.aux = aux;
+    
+    public String parseEndOfSentence(String text){
+        return text.replaceAll("(?!([a-z]{1}))([\\.\\,])(?=([A-Z]{1}))", " ");
     }
     
+    public String parseSpecialCharacters(String text){
+        return text.replaceAll("[^0-9a-zA-Z'.<> ]+", " ");
+    }
     
+    public String parseAcronyms(String text){
+        return text.replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ");
+    }
+    
+    public String parseDecimalNumbers(String text){
+        return text.replaceAll("\\.", " ");
+    }
+    
+    public String parseTags(String text){
+        return text.replaceAll("<\\w*>?|<?\\w*>", " ");
+    }
     
     public String CheckSpecialCharacters(String text){
         return text.replaceAll("<\\d>|<\\\\\\d>", " ").replaceAll(" +", " ");
     }
     
+    
+    
+    
     public String CheckSpecialCases(String text){
        //ESTA BOM return text.replaceAll("\\b'\\b", "");
       return text.replaceAll("\\b'\\b", "").replaceAll(" +", " "); ///DONE
     }
-    
     public String stemming(String word) {
         snowballStemmer.setCurrent(word);
 
