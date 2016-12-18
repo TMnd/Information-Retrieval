@@ -64,7 +64,7 @@ public class ProgramaRI {
                     sea.getMap();
                 }*/
             } catch (IOException ex) {
-                System.out.println("Ficheiro nao detctado");
+                System.out.println("Ficheiro nao detectado");
             }
         }
     }
