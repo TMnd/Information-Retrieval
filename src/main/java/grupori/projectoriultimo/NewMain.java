@@ -33,29 +33,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-
 public class NewMain{
     static Map<String, ArrayList<String>> tm = new TreeMap<>(); //TreeMap para os termos nao escritos imediatamente para ficheiro
     static StringBuilder mergeSaveDisc = null; //Para escrever para o ficheiro
     static boolean aux = true; //Para verificar se deve quebrar a linha ou nao!
     static List<String> ar2 = null; //É explicado mais abaixo
     static List<String> ar3 = null; //É explicado mais abaixo
-    
-      static BufferedReader br = null;
+    static BufferedReader br = null;
     static BufferedWriter bw = null;
 
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-       
-        //for (groups group : groups.values()) {
-            System.out.println("a escrever: a" /*+ group*/);
-            mapReduce("src\\main\\java\\grupori\\projectoriultimo\\index\\a" /*+ group.getGroupInitial(group)*/, "a"); //group.toString());
-           //System.out.println("Index " + group + " escrito!");
-            System.out.println("A remover os subindex a" /*+ group*/);
+    public static void main(String[] args) throws IOException{
+        
+        System.out.println("começar: ");
+        for (groups group: groups.values()) {
+            System.out.println("a escrever: " + group);
+            mapReduce("src\\main\\java\\grupori\\projectoriultimo\\index\\" + group.getGroupInitial(group), /*"a");*/group.toString());
+            System.out.println("Index " + group + " escrito!");
+            //System.out.println("A remover os subindex " + group);
             /*for (int i = 0; i < cont; i++) {
                 Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\index\\" + group.getGroupInitial(group) + "\\" + i + ".txt"));
             }*/
-        //} 
+        } 
+        System.out.println("Acabou!");
     }
     
     private static void mapReduce(String fileUrl, String letra) throws FileNotFoundException, IOException {
@@ -79,17 +79,17 @@ public class NewMain{
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         bw = new BufferedWriter(fw);
 
-        String menor = "";
-        
-        int cont11 = 0;
 
         while (true) { //Ciclo para estar sempre a correr enquanto haver documentos abertos no array "ar"
+            String menor = "";
+            int cont11 = 0;
             mergeSaveDisc = new StringBuilder();
             aux = false;
             ar2 = new ArrayList<>(); //array para inserir os termos por linha por cada sub-index
             ar3 = new ArrayList<>(); //array para limpar a hahs do termos ja gravados
             for (int i = 0; i < ar.size(); i++) { //correr os termos de cada linha de cada ficheiro aberto!
                 line = ar.get(i).readLine(); //proxima linha
+              
 
                 if (line == null) {
                     ar.get(i).close();
@@ -98,105 +98,104 @@ public class NewMain{
                     continue; //Passa para o proximo iterador do for sem sair do ciclo
                 }
 
+                String termo = line.split(",",2)[0];
+                String value = line.split(",",2)[1];
+                
                 if(menor.isEmpty()){
                     //menor = line.split(",")[0];
                     menor = split_banthar(line, ',')[0];
                     mergeSaveDisc.append(menor);
-                }else{
-                    
-
-                    if (!aux && cont11>ar.size()) { //Caso que o termo em no momento nao existir na treemap para iniciar a linha
-checkTermSmallThanMenor(split_banthar(menor, ',')[0]);
-
-//System.gc();
-                        //mergeSaveDisc.append(menor.split(",")[0]);
-                        mergeSaveDisc.append(split_banthar(menor, ',')[0]);
-                    }
                 }
-                //int resultado = line.split(",")[0].compareTo(menor);
-                int resultado = (split_banthar(line, ',')[0]).compareTo(menor);
+                 
+                int result = termo.compareTo(menor);
 
-                //<0 se a primeira string é menor que a segunda
-                //>0 se a primeira string for maior que a segunda
-                //=0 se ambas foram no mesmo tamanho
-                //Referencia: http://beginnersbook.com/2013/12/java-string-compareto-method-example/
-                if(resultado < 0){
-                    //menor = line.split(",")[0]; //Velor mais pequeno 
-                    menor = split_banthar(line, ',')[0];
-                    mergeSaveDisc.append(System.lineSeparator());
-                    mergeSaveDisc.append(menor);
-                }else if(resultado == 0){
-                    
-                    mergeSaveDisc.append(",").append(line.split(",",2)[1]).append(System.lineSeparator());
+                if(result == 0){
+                    //System.out.println(termo + " é igual que " + menor);
+                    mergeSaveDisc.append(",").append(value);
                 }else{
-                    if(!tm.containsKey(menor)){
-                        tm.put(menor, new ArrayList<>());
-                        tm.get(menor).add(line.split(",",2)[1]);
+                    //System.out.println(termo + " é menor que " + menor);
+                    if(!tm.containsKey(termo)){
+                        tm.put(termo, new ArrayList<>());
+                        tm.get(termo).add(value);
                     }else{
-                        tm.get(menor).add(line.split(",",2)[1]);
+                        tm.get(termo).add(value);
                     }
                 }
-               // ar2.add(line);  //Adcionar o termo para o ar2 que é o arraylist que contem os termos por linha
-               
-            cont11++;
+                
+                cont11++;
             }
-            mergeSaveDisc.append(System.lineSeparator());
-            bw.write(mergeSaveDisc.toString());
+
             if (ar.isEmpty()) { //Pare terminar o ciclo infinito, quando todos os ficheiros forem fechados e removidos do array
                 break;
             }
-
-          // String menor = ar2.get(0).split(",")[0]; // Inicializar o menor
-           
-
-            //checkTermSmallThanMenor(menor.split(",")[0]);
-         /*   checkTermSmallThanMenor(split_banthar(menor, ',')[0]);
-            
-            if (!aux) { //Caso que o termo em no momento nao existir na treemap para iniciar a linha
-                System.gc();
-                //mergeSaveDisc.append(menor.split(",")[0]);
-                mergeSaveDisc.append(split_banthar(menor, ',')[0]);
-            }*/
-
-            //Correr os termos de todos os documentos percentes na linha que se encontrar na altura
-            /*for (String ar_2 : ar2) {
-                String termo = ar_2.split(",", 2)[0];
-                String values = ar_2.split(",", 2)[1];
-
-                //int resultado = termo.compareTo(menor.split(",")[0]);
-                int resultado = termo.compareTo(split_banthar(menor, ',')[0]);
-                
-                if (resultado == 0) { //Se o termo for igual ao valor de "menor" ira fazer append dos values
-                    mergeSaveDisc.append(",").append(values);
-                } else if (resultado > 0) { //Se o termo for igual ao valor de "menor" assim vai para a treemap
-                     
-                }
-            }*/
+          
             mergeSaveDisc.append(System.lineSeparator()); //Criar a quebra de linha
+            
+            for(Map.Entry<String, ArrayList<String>> parent : tm.entrySet()){
+                String key = parent.getKey();
+            
+                int resultado = key.compareTo(menor);
+                
+                if(resultado < 0){
+                    mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
+                    ar3.add(key);
+                }
+                
+            }
+            //System.out.println("tm size antes: " + tm.size());
+            //System.out.println("ar3 antes: " + ar3.size());
+            
+            for(String ar3: ar3){
+                tm.remove(ar3);
+            }
+            
+            //System.out.println("ar3 depois: " + ar3.size());
+            
+            //System.out.println("tm size depois: " + tm.size());
+         
             bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", "")); //Escreer paro ficheiro
         }
-        writeLastTerms(); //Escrever a ultima parte da treemap caso exista termos nao inseridos
-        bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", ""));
+        
+        for(Map.Entry<String, ArrayList<String>> parent : tm.entrySet()){
+            String key = parent.getKey();
+            
+            //System.out.println("LAST: " + key + "," + tm.get(key));
+
+            mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
+            ar3.add(key);
+        }
+        for(String ar3: ar3){
+            tm.remove(ar3);
+        }
+        bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", "")); //Escreer paro ficheiro
+        //System.out.println("tm size final: " + tm.size());
+       // writeLastTerms(); //Escrever a ultima parte da treemap caso exista termos nao inseridos
+       // bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", ""));
         bw.close(); //Fechar a escrita
     }
     
     private static void checkTermSmallThanMenor(String termo) throws IOException{ //Verificação se um termo menor existe na treemap
         //ArrayList<String> ar = new ArrayList<String>();
-
+System.out.println("1");
         for (Map.Entry<String, ArrayList<String>> entry : tm.entrySet()) {
+            System.out.println("1");
             String key = entry.getKey();
             int resultado = key.compareTo(termo);
-            if(resultado <0){ //se a key é menor que o termo 
+            if(resultado < 0){ 
+                System.out.println("key: " + key);
                 mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
                 bw.write(mergeSaveDisc.toString());
-              //  ar.add(key);
                 tm.remove(key);
-            }else if(resultado == 0){ // se a key é igual ao termo
+               // System.out.println("key: " + key + " é menor que :menor:" + menor);
+            }else {
+                //System.out.println("2222222: " + key + " é menor que :menor:" + menor);
+                /*if(resultado == 0){ // se a key é igual ao termo
                 mergeSaveDisc.append(key).append(",").append(tm.get(key));
                // ar.add(key);
                 aux = true; //Neste caso é para impedir que a se escreva o termo na proxima linha.
-                tm.remove(key);
-            }        
+                tm.remove(key);*/
+                System.out.println("2");
+            }     
         }
       //  return ar;
     }

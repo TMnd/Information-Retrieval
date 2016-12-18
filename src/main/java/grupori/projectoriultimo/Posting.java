@@ -14,8 +14,8 @@ import java.util.TreeMap;
  * @author joaoa
  */
 class Posting {
-    private HashMap<Integer, Float> hm;
-    private float docfreq = 0;
+    private HashMap<Integer, Integer> hm;
+    private int docfreq = 0;
     
     public Posting(){
         
@@ -24,13 +24,13 @@ class Posting {
     //Construtor criar uma sub map
     public Posting(int docid) { //inicializar variaveis e criar o objecto
         this.hm = new HashMap<>();
-        this.hm.put(docid, 1.0F);
+        this.hm.put(docid, 1);
         this.docfreq++;
     }
     
     //
     public void addToPosting(int docId) {
-        this.hm.put(docId, 1.0F);
+        this.hm.put(docId, 1);
         this.docfreq++;
     }
 
@@ -45,7 +45,7 @@ class Posting {
     
     //mergingPosting = caso exista 2 termos iguais no doc
     public Posting mergePosting(Posting posting) {
-        HashMap<Integer,Float> tFrequencies = posting.getTermFrequencies();
+        HashMap<Integer,Integer> tFrequencies = posting.getTermFrequencies();
 
         for (Integer docId : tFrequencies.keySet()) {
             if (!this.hm.containsKey(docId)) {
@@ -59,7 +59,7 @@ class Posting {
     }
 
     //Para devolver a sub-hashmap!
-    public HashMap<Integer, Float> getTermFrequencies() {
+    public HashMap<Integer, Integer> getTermFrequencies() {
         return this.hm;
     }
 

@@ -1,8 +1,0 @@
-a, a5:2.0
-aa, aa5:2.0
-ab, ab5:2.0
-abc, abc5:2.0
-adf, adf5:2.0
-adfe, adfe5:2.0
-adfef, adfef5:2.0
-adfefg, adfefg5:2.0

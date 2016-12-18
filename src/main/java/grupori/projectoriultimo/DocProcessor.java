@@ -104,8 +104,8 @@ public class DocProcessor {
         id.saveDisc();
         System.out.println("Final Wipe!");
         id.finalwhipe(contEnviarDoc);
-       /* System.out.println("Merge...");
-        id.reduçãoIndex();*/
+        System.out.println("Merge...");
+        id.reduçãoIndex();
     }    
     
     private void parseArff(File caminhoFicheiro){

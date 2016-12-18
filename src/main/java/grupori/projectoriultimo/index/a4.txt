@@ -1,6 +1,0 @@
-a, a4:2.0
-aa, aa4:2.0
-ab, ab4:2.0
-az, az4:3.0
-abc, abc4:2.0
-adf, adf4:2.0
