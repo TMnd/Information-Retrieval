@@ -39,26 +39,12 @@ public class DocProcessor {
     Indexer id = new Indexer();
     Tokeneizer tk = new Tokeneizer();
     
-    //HashSet<String> hs = new HashSet<String>();
     HashMap<Integer, String> map = new HashMap<>();
     int contEnviarDoc = 0;
     
     StringBuilder texto = null;
     FileInputStream fis = null;
     CSVParser parser;
-            
-    Runtime runtime = Runtime.getRuntime();
-    
-    //Padrão para usar o regex para tira as "" que rodeiam o documento
-    
-    //Comentario temporariamente
-    //HashMap<Integer, String> hmap = new HashMap<Integer, String>();
-
-    //Para filtrar as linhas que começarem com um "@"
-    
-        
-    //Para cada linha (ids e os documentos) que contém cada ficheiro 
-   
     
     private String Unzip(String SourceZip){
         System.out.println("entrou no unzip");
@@ -76,20 +62,17 @@ public class DocProcessor {
     }
     
     public void readPath(String SourceZip) throws IOException{
-        System.out.println("entrou");
-
         File folder;
         if(SourceZip.endsWith(".zip")){
             folder = new File(Unzip(SourceZip));
         }else{
             folder = new File(SourceZip);
         }
-        System.out.println("entrou 2");
+
         File[] listOfFiles = folder.listFiles();
         for(int i=0; i<listOfFiles.length;i++){
            if(listOfFiles[i].getName().endsWith(".arff")){
                System.out.println("é um ficheiro .arff");
-               //parse arff
                parseArff(listOfFiles[i]);
            }else{
                 System.out.println("Ficheiro: " + listOfFiles[i].toString());
@@ -170,121 +153,8 @@ public class DocProcessor {
                 id.memory(contEnviarDoc);
             }
         }
-    }
+    } 
     
-    private String parseCSV_antigo(File caminhoFicheiro){
-        /*System.out.println("entrou no parcecsv");
-        
-        StringBuilder sbb = new StringBuilder();
-        
-        CsvParserSettings settings =  new CsvParserSettings();
-        settings.getFormat().setLineSeparator("\n");
-        
-        CsvParser parser = new CsvParser(settings);
-        
-        parser.beginParsing(caminhoFicheiro);
-        
-        String[] row;
-        while((row = parser.parseNext()) != null){
-            
-        }*/
-        
-        
-        
-        CsvParserSettings parserSettings = new CsvParserSettings();
-        parserSettings.getFormat().setLineSeparator("\n");
-        //parserSettings.setLineSeparatorDetectionEnabled(true);
-        parserSettings.setMaxCharsPerColumn(60000);
-        RowListProcessor rowProcessor = new RowListProcessor();
-        parserSettings.setRowProcessor(rowProcessor);
-        parserSettings.setHeaderExtractionEnabled(true);
-       //parserSettings.setReadInputOnSeparateThread(true);
-        parserSettings.selectFields("Id","Title","Body");
-        parserSettings.setSkipEmptyLines(true);
-        //5000 em 5000 linhas grava ou faz algo    
-        //parserSettings.setNumberOfRecordsToRead();//3000);
-        CsvParser parser = new CsvParser(parserSettings);
-        
-        try{
-  
-                parser.beginParsing(caminhoFicheiro);
-                String[] line;
-                
-                while ((line = parser.parseNext()) != null)
-                {
-                    //System.out.println("1");
-                   
-                    //System.out.println("1.5");
-                    try{
-                       // System.out.println("2");
-                        int key = Integer.parseInt(line[0]);
-                        String value = line[1].replaceAll("(?s)<pre>.*?</pre>", "").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","");
-                        //String value = ola3(ola2(ola(line[1])));//line[1].replaceAll("\\<[^>]*>", "").replaceAll("[^a-zA-Z0-9]", " ").replaceAll("\\s+", " ").trim();
-                        
-                        
-                        
-                        if(value.length() != 0){
-                          // System.out.println("3");
-                          //map.put(key, value);
-                //hs.put(value);
-                            //System.out.println(key);
-                         //  System.out.println(value);
-                            contEnviarDoc++;
-                          //  System.out.println("a enviar o documento: " + contEnviarDoc);
-                            id.addTM(tk.receberDocumento(value),key);
-                        }
-                        
-                       id.memory(contEnviarDoc);
-                        //System.out.println("LASTPART:" +lastPart);
-                        //System.out.println("NEXT:" +value);
-                        //System.out.println("ID:"+key);
-                        //System.out.println("Valor:"+value);
-                    }catch(Exception ex){
-                        System.out.println("ex Parse Int: " + ex.toString());
-                    }
-                }
-                System.out.println("last save");
-                id.saveDisc();
-                System.out.println("merging...");
-                id.reducaoIndex();
-            }catch(Exception ex){
-                System.out.println("EX: " + ex.toString());
-            }
-        return null;
-    }
-    
-    
-    private String ola(String olaaa){
-        return olaaa.replaceAll("\\<[^>]*>", "");
-    }
-    
-    private String ola2(String olaaa){
-        return olaaa.replaceAll("[^a-zA-Z0-9]", " ");
-    }
-    
-    private String ola3(String olaaa){
-        return olaaa.replaceAll("\\s+", " ");
-    }
-    
-    /*public void checkMemoryAndStore() throws IOException {
-        
-        //System.out.println("Checking memory...");
-        //long usedMem = (100*(runtime.maxMemory() - runtime.freeMemory()))/runtime.totalMemory();
-        
-        long totalfreememory = runtime.freeMemory() + (runtime.maxMemory() - runtime.totalMemory());  
-        //System.out.println(totalfreememory);
-        long usedMem = 100*(runtime.totalMemory()-totalfreememory)/runtime.totalMemory();
-        //System.out.println(usedMem);
-
-        if(usedMem > 70){
-            map.clear();
-            Runtime.getRuntime().gc();
-            //System.gc();
-            if(usedMem>20){
-                System.gc();   
-            }
-        }
-    }*/
 }
 
 

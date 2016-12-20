@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,11 +42,11 @@ public class Indexer {
     Map<Integer, Integer> docMap = new HashMap<>();
 
     //Sub-Indexs Merge
-    static TreeMap<String, ArrayList<String>> tm = new TreeMap<>(); //TreeMap para os termos nao escritos imediatamente para ficheiro
+    //static TreeMap<String, ArrayList<String>> tm = new TreeMap<>(); //TreeMap para os termos nao escritos imediatamente para ficheiro
     static StringBuilder mergeSaveDisc = null; //Para escrever para o ficheiro
     static boolean aux = true; //Para verificar se deve quebrar a linha ou nao!
     static List<String> ar2 = null; //É explicado mais abaixo
-    static List<String> ar3 = null; //É explicado mais abaixo
+    static List<String> ArrayDeleteTree = null; //É explicado mais abaixo
     static BufferedReader br = null;
     static BufferedWriter bw = null;
 
@@ -128,10 +129,10 @@ public class Indexer {
     }
 
     private static void mapReduce(String fileUrl, String letra) throws FileNotFoundException, IOException {
-        List<BufferedReader> ar = new ArrayList<>(); //Array list para armazenar os ficheiros abertos
+           List<BufferedReader> ar = new ArrayList<>(); //Array list para armazenar os ficheiros abertos
         String line = null;
         mergeSaveDisc = null;  //Para criar a string que vai para o ficheiro e para apagar o que foi inserido antes
-       
+
         File folder = new File(fileUrl);
         File[] ListOfFiles = folder.listFiles();
         //Carregar ficheiros para um arraylist
@@ -140,20 +141,18 @@ public class Indexer {
             br = new BufferedReader(new FileReader(ListOfFiles[i]));
             ar.add(br);
         }
-
+        int cont = 0;
         //Criar ficheiro pronto para gravar
         File file = new File("src\\main\\java\\grupori\\projectoriultimo\\temp\\" + letra + ".txt");
         file.createNewFile();
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         bw = new BufferedWriter(fw);
         String referencia = "";
-        int cont =0;
-        while (true) { //Ciclo para estar sempre a correr enquanto haver documentos abertos no array "ar"
-            //String referencia = "";
+
+        TreeMap<String, ArrayList<String>> tm = new TreeMap<>();
+        while (!ar.isEmpty()) {
             mergeSaveDisc = new StringBuilder();
-            aux = false;
-            ar2 = new ArrayList<>(); //array para inserir os termos por linha por cada sub-index
-            ar3 = new ArrayList<>(); //array para limpar a hahs do termos ja gravados
+            ArrayDeleteTree = new ArrayList<>(); //array para limpar a hahs do termos ja gravados
             for (int i = 0; i < ar.size(); i++) { //correr os termos de cada linha de cada ficheiro aberto!
                 line = ar.get(i).readLine(); //proxima linha
 
@@ -164,67 +163,224 @@ public class Indexer {
                     continue; //Passa para o proximo iterador do for sem sair do ciclo
                 }
 
-                String termo = line.split(",",2)[0];
-                String value = line.split(",",2)[1];
-                
-                if (i == ar.size() - 1 && cont==0) {
-                    referencia = termo;
-                    //System.out.println("LAST OF THE LINE: " + referencia);
-                    //ultimo da tree é que é a referencia
-                }else{    
-                    if(termo.compareTo(referencia)<0){
-                        referencia = termo;
-                    //System.out.println("LAST OF THE LINE: " + referencia);
-                    }
-                }
+                String[] Elementos = line.split(",", 2);
 
-                if (!tm.containsKey(termo)) {
-                    tm.put(termo, new ArrayList<>());
-                    tm.get(termo).add(value);
+                if (!tm.containsKey(Elementos[0])) {
+                    tm.put(Elementos[0], new ArrayList<>());
+                    tm.get(Elementos[0]).add(Elementos[1]);
                 } else {
-                    //System.out.println("EXISTE!! - " + termo );
-                    tm.get(termo).add(value);
-                }
-                //ar2.add(termo);
-                cont++;
-            }
-            if (ar.isEmpty()) { //Pare terminar o ciclo infinito, quando todos os ficheiros forem fechados e removidos do array
-                System.out.println("A SAIR");
-                break;
-            }
-
-            for(Map.Entry<String, ArrayList<String>> parent : tm.entrySet()){
-                String key = parent.getKey();
-                //System.out.println("referencia: " + referencia);
-                int result = key.compareTo(referencia);
-                
-                if (result<0) {
-                    //System.out.println("dasdasdasdasda");
-                    mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
-                    ar3.add(key);
+                    tm.get(Elementos[0]).add(Elementos[1]);
                 }
             }
 
-            for (String array3 : ar3) {
-                tm.remove(array3);
-            }
-            
+            mergeSaveDisc.append(tm.firstKey()).append(",").append(tm.firstEntry().getValue()).append(System.lineSeparator());
+            tm.remove(tm.firstEntry().getKey());
+
+            bw.write(mergeSaveDisc.toString()/*.replaceAll("\\[|\\]", "").replaceAll(" ", ""))*/); //Escrever paro ficheiro
+            //cont++;
         }
-        
-            for (Map.Entry<String, ArrayList<String>> parent : tm.entrySet()) {
-                String key = parent.getKey();
 
-                mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
-                ar3.add(key);
-            }
-            for (String array3 : ar3) {
-                tm.remove(array3);
-            }
-        bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", "")); //Escrever paro ficheiro
+        for (Map.Entry<String, ArrayList<String>> parent : tm.entrySet()) {
+            mergeSaveDisc = new StringBuilder();
+            String key = parent.getKey();
+
+            mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
+            bw.write(mergeSaveDisc.toString());
+            ArrayDeleteTree.add(key);
+        }
+        for (String array3 : ArrayDeleteTree) {
+            tm.remove(array3);
+        }
+        ArrayDeleteTree.clear();
+        System.gc();
         bw.close(); //Fechar a escrita
     }
 
-        
+    /*dasdasdasdasdwhile (true) { //Ciclo para estar sempre a correr enquanto haver documentos abertos no array "ar"
+            
+     mergeSaveDisc = new StringBuilder();
+     aux = false;
+     ar2 = new ArrayList<>(); //array para inserir os termos por linha por cada sub-index
+     ar3 = new ArrayList<>(); //array para limpar a hahs do termos ja gravados
+     for (int i = 0; i < ar.size(); i++) { //correr os termos de cada linha de cada ficheiro aberto!
+     line = ar.get(i).readLine(); //proxima linha
+
+     if (line == null) {
+     ar.get(i).close();
+     ar.remove(i);
+     i--; //Como o ficheiro em posição i é fechado e removido, decrementa-se no contador i para voltar a ler o documento i na posição do documento que foi retirado
+     continue; //Passa para o proximo iterador do for sem sair do ciclo
+     }
+
+     String termo = line.split(",", 2)[0];
+     String value = line.split(",", 2)[1]; dasdasdasda*/
+                //Metodo (2) do primeiro termo ser o mais pequeno
+                /*if (menor.isEmpty()) {
+     //menor = line.split(",")[0];
+     menor = split_banthar(line, ',')[0];
+     mergeSaveDisc.append(menor);
+     }
+
+     int result = termo.compareTo(menor);
+
+     if (result == 0) {
+     mergeSaveDisc.append(",").append(value);
+     } else {
+     //System.out.println(termo + " é menor que " + menor);
+     if (!tm.containsKey(termo)) {
+     tm.put(termo, new ArrayList<>());
+     tm.get(termo).add(value);
+     } else {
+     tm.get(termo).add(value);
+     }
+     }*/
+                //Metodo (3) do ultimo termo ser o mais pequeno
+                /*if (i == ar.size() - 1) {
+     referencia = termo;
+     }
+
+     if (!tm.containsKey(termo)) {
+     tm.put(termo, new ArrayList<>());
+     tm.get(termo).add(value);
+     } else {
+     tm.get(termo).add(value);
+     }*/
+                //Metodo (4) verificar primeiro que termo e o mais pequeno e inserir os restantesp ara um arraylist
+              /* HELOOO if (inicio) {
+     menor = termo;
+     }
+     if (termo.compareTo(referencia) < 0) {
+     referencia = termo;
+     }
+     ar2.add(line);
+     inicio = false;
+     }
+
+     if (ar.isEmpty()) { //Pare terminar o ciclo infinito, quando todos os ficheiros forem fechados e removidos do array
+     break;
+     } HELLO    */
+            //mergeSaveDisc.append(System.lineSeparator()); //Criar a quebra de linha   PARA O METODO 2
+    //para o metodo (2) e (3)
+           /* for (Map.Entry<String, ArrayList<String>> parent : tm.entrySet()) {
+     String key = parent.getKey();
+
+     if (key.compareTo(referencia) < 0) {
+     mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
+     ar3.add(key);
+     }
+     }
+
+     for (String ar3 : ar3) {
+     tm.remove(ar3);
+     }*/
+    //para o metodo (4)
+       /*//aquiiii    for (String linhaArmazenadas : ar2) {
+     String termo = linhaArmazenadas.split(",", 2)[0];
+     String value = linhaArmazenadas.split(",", 2)[1];
+
+     if (termo.compareTo(referencia) < 0) {
+     mergeSaveDisc.append(termo).append(",").append(value).append(System.lineSeparator());
+     } else {
+     if (!tm.containsKey(termo)) {
+     tm.put(termo, new ArrayList<>());
+     tm.get(termo).add(value);
+     } else {
+     tm.get(termo).add(value);
+     }
+     }
+            
+     }
+     ar2.clear();
+     bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", "")); //Escreer paro ficheiro
+
+     for (Map.Entry<String, ArrayList<String>> parent : tm.entrySet()) {
+     String key = parent.getKey();
+
+     mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
+     ar3.add(key);
+     }
+     for (String ar3 : ar3) {
+     tm.remove(ar3);
+     }
+     ar3.clear();
+     bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", "")); //Escreer paro ficheiro
+            
+     }
+     bw.close(); //Fechar a escrita
+     }*/ // ACABAAQUIE
+    //Metodo correcto mas a memoria estoira!
+    //String referencia = "";
+           /*mergeSaveDisc = new StringBuilder();
+     ar3 = new ArrayList<>(); //array para limpar a hahs do termos ja gravados
+     for (int i = 0; i < ar.size(); i++) { //correr os termos de cada linha de cada ficheiro aberto!
+     line = ar.get(i).readLine(); //proxima linha
+
+     if (line == null) {
+     ar.get(i).close();
+     ar.remove(i);
+     i--; //Como o ficheiro em posição i é fechado e removido, decrementa-se no contador i para voltar a ler o documento i na posição do documento que foi retirado
+     continue; //Passa para o proximo iterador do for sem sair do ciclo
+     }
+
+     String termo = line.split(",", 2)[0];
+     String value = line.split(",", 2)[1];
+
+     if (i == ar.size() - 1 && cont == 0) {
+     referencia = termo;
+                 
+                    
+     } else if (termo.compareTo(referencia) < 0) {
+     referencia = termo;
+     //System.out.println("LAST OF THE LINE: " + referencia);
+     }
+
+     if (!tm.containsKey(termo)) {
+     tm.put(termo, new ArrayList<>());
+     tm.get(termo).add(value);
+     } else {
+     //System.out.println("EXISTE!! - " + termo );
+     tm.get(termo).add(value);
+     }
+     cont++;
+     }
+     if (ar.isEmpty()) { //Pare terminar o ciclo infinito, quando todos os ficheiros forem fechados e removidos do array
+     System.out.println("A SAIR");
+                
+     break;
+     }
+
+     for (Map.Entry<String, ArrayList<String>> parent : tm.entrySet()) {
+     String key = parent.getKey();
+     int result = key.compareTo(referencia);
+
+     if (result < 0) {
+     mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
+     ar3.add(key);
+     }
+     }
+
+     for (String array3 : ar3) {
+     tm.remove(array3);
+     System.gc();
+     }
+     // bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", "")); //Escrever paro ficheiro
+     }
+     for (Map.Entry<String, ArrayList<String>> parent : tm.entrySet()) {
+     String key = parent.getKey();
+
+     mergeSaveDisc.append(key).append(",").append(tm.get(key)).append(System.lineSeparator());
+     //ar3.add(key);
+     }
+     System.out.println("a limpar!");
+     for (String array3 : ar3) {
+     tm.remove(array3);
+     System.gc();
+     }
+     tm.clear();
+     System.out.println("a gravar ultimo bloco");
+     bw.write(mergeSaveDisc.toString().replaceAll("\\[|\\]", "").replaceAll(" ", "")); //Escrever paro ficheiro
+     bw.close(); //Fechar a escrita
+     }*/
     public String getGroup(String term) {
         for (groups group : groups.values()) {
             if (group.matchesGroup(group, term)) {
@@ -242,7 +398,7 @@ public class Indexer {
         File file2 = new File("src\\main\\java\\grupori\\projectoriultimo\\temp\\docindex.txt");
         file2.createNewFile();
         FileWriter fw2 = new FileWriter(file2.getAbsoluteFile());
-        bwDocId = new BufferedWriter(fw2);   
+        bwDocId = new BufferedWriter(fw2);
 
         File folder = new File(pastaIndexDocs);
         File[] ListOfFiles = folder.listFiles();
@@ -255,8 +411,8 @@ public class Indexer {
                 mappingHM.put(termInfo[0], Integer.parseInt(termInfo[1]));
             }
             brDocid.close();
-        }  
-       
+        }
+
         for (Map.Entry<String, Integer> parent : mappingHM.entrySet()) {
             String docid = parent.getKey();
 
@@ -264,15 +420,14 @@ public class Indexer {
         }
         bwDocId.write(sbMergeDocIds.toString());
         bwDocId.close();
-        
-         mappingHM.clear();
+
+        mappingHM.clear();
         System.gc();
     }
 
     public void reducaoIndex() throws IOException {
-        
-        System.out.println("A gravar o docIdMapping:");
-        MergeDodMapping("src\\main\\java\\grupori\\projectoriultimo\\index\\idMap");
+        //System.out.println("A gravar o docIdMapping:");
+        //MergeDodMapping("src\\main\\java\\grupori\\projectoriultimo\\index\\idMap");
         for (groups alfabeto : groups.values()) {
             String grupo = groups.getGroupInitial(alfabeto);
             System.out.println("A escrever o index: " + grupo);
@@ -281,8 +436,8 @@ public class Indexer {
             System.out.println("A remover os subindex " + grupo);
             System.out.println("Numero maximo do contador (cont): " + cont);
             /*for (int i = 0; i < cont; i++) {
-                Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\index\\" + group.getGroupInitial(group) + "\\" + i + ".txt"));
-            }*/
+             Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\index\\" + group.getGroupInitial(group) + "\\" + i + ".txt"));
+             }*/
         }
     }
 
@@ -334,4 +489,28 @@ public class Indexer {
 
         return array;
     }
+
+    /*public void calculos(String Linha) {
+     Map<String, HashMap<Integer, Float>> calculos = new HashMap<String, HashMap<Integer, Float>>();
+     float wTotal = 0;
+     float somatorioRaizQuadrada;
+     float calculo = 0;
+     
+     String[] elementosLinha = Linha.split(",",2);
+     Sr
+        
+     for (Map.Entry<Integer, Float> child : map.get(key).entrySet()) {
+     int subKey = child.getKey();
+
+     if (map.get(key).get(subKey) != null) {
+     wTotal += Math.pow(map.get(key).get(subKey), 2);
+     }
+     }
+     somatorioRaizQuadrada = (float) Math.sqrt(wTotal);
+     for (Map.Entry<Integer, Float> child : map.get(key).entrySet()) {
+     int subKey = child.getKey();
+     calculo = (float) ((1 + Math.log(map.get(key).get(subKey))) / somatorioRaizQuadrada);
+     map.get(key).put(subKey, calculo);
+     }
+     }*/
 }

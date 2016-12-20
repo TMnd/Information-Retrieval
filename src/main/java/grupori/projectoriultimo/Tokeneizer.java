@@ -79,7 +79,7 @@ public class Tokeneizer {
       /*  StringTokenizer st = new StringTokenizer(line.replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").
          replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ").replaceAll("\\.", " ").replaceAll(" +", " ").trim()); */
         //StringTokenizer st = new StringTokenizer(parseEndOfSentence(parseSpecialCharacters(parseAcronyms(parseDecimalNumbers(line)))));
-        String[] st = split_banthar(parseEndOfSentence(parseSpecialCharacters(parseAcronyms(parseDecimalNumbers(line)))), ' ');
+        String[] st = splitBanthar.split_banthar(parseEndOfSentence(parseSpecialCharacters(parseAcronyms(parseDecimalNumbers(line)))), ' ');
 
         //while (st.hasMoreElements()) { //Corre se a string tokeneizer tiver mais elementos
         for (String sts : st) {
@@ -143,30 +143,4 @@ public class Tokeneizer {
 
     }
 
-    //custom split
-    private static String[] split_banthar(String s, char delimeter) {
-        int count = 1;
-
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == delimeter) {
-                count++;
-            }
-        }
-        String[] array = new String[count];
-
-        int a = -1;
-        int b = 0;
-
-        for (int i = 0; i < count; i++) {
-
-            while (b < s.length() && s.charAt(b) != delimeter) {
-                b++;
-            }
-            array[i] = s.substring(a + 1, b);
-            a = b;
-            b++;
-        }
-
-        return array;
-    }
 }
