@@ -90,7 +90,7 @@ public class Tokeneizer {
 
                 //Passa o token pelo stemmer e pelo stemmer
                 String tokentratado = CheckSpecialCases(sts).replaceAll("\\'", " ").replaceAll(" +", "").replace(" ", "").replaceAll(">", "").replace("<", "").toLowerCase();
-                //String tokentratado = CheckSpecialCharacters(parseTags(parseDecimalNumbers(parseAcronyms(parseSpecialCharacters(parseEndOfSentence(token))))));
+                //String tokentratado = CheckSpecialCharacters(parseTags(parseDecimalNumbers(parseAcronyms(parseSpecialCharacters(parseEndOfSentence(sts))))));
                 if (!tokentratado.isEmpty()) {
                     String tokenStemmer = stemming(tokentratado);
 

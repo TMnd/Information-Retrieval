@@ -1,6 +1,8 @@
 package grupori.projectoriultimo;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +17,8 @@ public class ProgramaRI {
         DocProcessor dp = new DocProcessor();
         Tokeneizer tk = new Tokeneizer();
         Seacher sea = new Seacher();
+        Ranked rnk = new Ranked();
+        Indexer dasda = new Indexer();
         
         Scanner sc = new Scanner(System.in);
         
@@ -57,12 +61,24 @@ public class ProgramaRI {
         }else{
             System.out.println("nao e zip");
             try {
-                dp.readPath(caminhoFicheiroComprimido);
+                //dp.readPath(caminhoFicheiroComprimido);
                 System.out.println("Indexação Completa!");
-                /*System.out.println("Insira o termo que deseja procurar:");
-                if(sea.seacher(sc.nextLine())){
-                    sea.getMap();
-                }*/
+                System.out.println("Insira os termos para pesqueisar:");
+              dasda.reducaoIndex();
+                /*Map<Integer, Float> scorehm = new HashMap<>(rnk.calculoScore(sea.seacher(sc.nextLine())));
+                // rnk.calculoScore(sea.seacher(sc.nextLine())).toString();
+                  int contadorTop5 = 0;
+                    System.out.println(rnk.sortByValue(scorehm));
+                  for(Map.Entry<Integer, Float> parent : rnk.sortByValue(scorehm).entrySet()){
+                      contadorTop5++;
+                      if(contadorTop5 > 5){
+                          continue;
+                      }
+                      Integer key = parent.getKey();
+
+                      System.out.println("Key: " + key + " Values: " + parent.getValue());
+                  }*/
+                  System.out.println("ACABOU!");
             } catch (IOException ex) {
                 System.out.println("Ficheiro nao detectado");
             }

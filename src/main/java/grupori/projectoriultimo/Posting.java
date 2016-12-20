@@ -63,27 +63,4 @@ class Posting {
         return this.hm;
     }
 
-  
-    /*
-    //Verificar se contem o documento na hashmap
-    public boolean containsDoc(int docId) {
-        return this.hm.containsKey(docId);
-    }
-    
-    //Caso se exite o termo mas nao o documento
-    public void addToPosting(int docId) {
-        this.hm.put(docId, 1.0f);
-        this.docfreq++;
-    }
-    
-    //actualizar a freq do termo em cada doc
-    public void updatePosting(int docId) {
-        this.hm.put(docId, this.hm.get(docId)+1);
-        
-    }
-    
-    //Ir buscar os valores da hm correspondentes
-    public HashMap<Integer, Float> getTermFrequencies() {
-        return this.hm;
-    }*/
 }

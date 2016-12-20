@@ -94,10 +94,6 @@ public class DocProcessor {
            }else{
                 System.out.println("Ficheiro: " + listOfFiles[i].toString());
                 parseCSV(listOfFiles[i]);
-                //parseCSV_antigo(folder);
-                /*System.out.println("Change file");
-                id.saveDisc();
-                id.finalwhipe(contEnviarDoc);*/
            }
         }
         System.out.println("Last save");
@@ -105,7 +101,7 @@ public class DocProcessor {
         System.out.println("Final Wipe!");
         id.finalwhipe(contEnviarDoc);
         System.out.println("Merge...");
-        id.reduçãoIndex();
+        id.reducaoIndex();
     }    
     
     private void parseArff(File caminhoFicheiro){
@@ -250,7 +246,7 @@ public class DocProcessor {
                 System.out.println("last save");
                 id.saveDisc();
                 System.out.println("merging...");
-                id.reduçãoIndex();
+                id.reducaoIndex();
             }catch(Exception ex){
                 System.out.println("EX: " + ex.toString());
             }
