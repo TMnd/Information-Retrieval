@@ -45,17 +45,12 @@ public enum groups {
     }
     
     public static String getGroupInitial(groups abbr){
-       // System.out.println("1");
     for(groups g : values()){
-        //System.out.println("2");
         if(g.equals(abbr)){
-            //System.out.println("3");
             String[] teste = g.toString().split("_");
             return teste[1];
         }
     }
     return null;
-    }
-    
-    
+    }  
 }

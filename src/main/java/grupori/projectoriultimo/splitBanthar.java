@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package grupori.projectoriultimo;
 
 /**
- *
- * @author Joao Amaral
+ * @author João Amaral
+ * @author Mafalda Rodrigues
  */
 public class splitBanthar {
-    //custom split
+    //custom split  
     public static String[] split_banthar(String s, char delimeter) {
         int count = 1;
 

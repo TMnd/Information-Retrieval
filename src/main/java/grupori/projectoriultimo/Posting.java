@@ -1,17 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package grupori.projectoriultimo;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
- *
- * @author joaoa
+ * @author João Amaral
+ * @author Mafalda Rodrigues
  */
 class Posting {
     private HashMap<Integer, Integer> hm;
@@ -41,21 +34,6 @@ class Posting {
     
     public void updatePosting(int docId) {
         this.hm.put(docId, this.hm.get(docId) + 1);
-    }
-    
-    //mergingPosting = caso exista 2 termos iguais no doc
-    public Posting mergePosting(Posting posting) {
-        HashMap<Integer,Integer> tFrequencies = posting.getTermFrequencies();
-
-        for (Integer docId : tFrequencies.keySet()) {
-            if (!this.hm.containsKey(docId)) {
-                this.hm.put(docId, tFrequencies.get(docId));
-                this.docfreq++;
-            } else {
-                this.hm.put(docId, this.hm.get(docId) + tFrequencies.get(docId));
-            }
-        }
-        return this;
     }
 
     //Para devolver a sub-hashmap!

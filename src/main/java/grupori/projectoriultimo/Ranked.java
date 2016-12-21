@@ -1,36 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package grupori.projectoriultimo;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- *
- * @author joaoa
+ * @author João Amaral
+ * @author Mafalda Rodrigues
  */
 public class Ranked {
 
     static Map<String, String> indexDoc = new TreeMap<>();
 
     private static boolean loadIndexMapping() throws IOException {
-        BufferedReader brIndexList = Files.newBufferedReader(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\temp\\docindex.txt"));
+        BufferedReader brIndexList = Files.newBufferedReader(java.nio.file.Paths.get("Index\\docindex.txt"));
 
         for (String line; (line = brIndexList.readLine()) != null;) {
             String[] termInfo = line.split(",", 2);
@@ -41,25 +33,28 @@ public class Ranked {
 
     public ArrayList<String> score(Map<String, Float> scorehm) {
         ArrayList<String> arFinal = new ArrayList<>();
-        int contadorTop5 = 0;
-        //System.out.println(rnk.sortByValue(scorehm));
+        int contTop5 = 0;
         for (Map.Entry<String, Float> parent : sortByValue(scorehm).entrySet()) {
-            contadorTop5++;
-            if (contadorTop5 > 5) {
+            contTop5++;
+            if (contTop5 > 5) {
                 continue;
             }
             String key = parent.getKey();
-
-            //System.out.println("Key: " + key + " Values: " + parent.getValue());
+            
+            //Mudar para melhor output
             arFinal.add("Key: " + indexDoc.get(key) + " Values: " + parent.getValue());
         }
         return arFinal;
     }
 
-    public static Map<String, Float> calculoScore(Map<String, HashMap<Integer, Float>> oldhm) throws IOException {
+    public static Map<String, Float> calcScore(Map<String, HashMap<Integer, Float>> oldhm){
         Map<String, Float> scorehm = new HashMap<>();
         if (indexDoc.isEmpty()) {
-            loadIndexMapping();
+            try {
+                loadIndexMapping();
+            } catch (IOException ex) {
+                Logger.getLogger(Ranked.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (Map.Entry<String, HashMap<Integer, Float>> parent : oldhm.entrySet()) {
@@ -85,14 +80,11 @@ public class Ranked {
     }
 
     public static <Integer, Float extends Comparable<? super Float>> Map<Integer, Float> sortByValue(Map<Integer, Float> map) {
-        return map.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
-                .collect(Collectors.toMap(
+        return map.entrySet().stream().sorted(Map.Entry.comparingByValue(Collections.reverseOrder())).collect(Collectors.toMap(
                                 Map.Entry::getKey,
                                 Map.Entry::getValue,
                                 (e1, e2) -> e1,
                                 LinkedHashMap::new
-                        ));
+        ));
     }
 }
