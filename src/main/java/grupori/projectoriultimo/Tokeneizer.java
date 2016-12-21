@@ -19,7 +19,7 @@ public class Tokeneizer {
     SnowballStemmer snowballStemmer = new englishStemmer();
     ArrayList<String> arTokens;
     
-    public void LoadStopWords(String url) throws IOException {
+    public static void LoadStopWords(String url) throws IOException {
         //ler o ficheiro txt
         FileReader f = new FileReader(url);
        
@@ -35,14 +35,12 @@ public class Tokeneizer {
     }
 
     public ArrayList<String> receiveDoc(String line, boolean stemmercheck) throws IOException {
-
         arTokens = new ArrayList<>();
       
         String[] st = splitBanthar.split_banthar(parseEndOfSentence(parseSpecialCharacters(parseAcronyms(parseDecimalNumbers(line)))), ' ');
-
+   
         for (String sts : st) {
             if (!StopWord.contains(sts)) {
-                
                 String tokentratado = CheckSpecialCases(sts).replaceAll("\\'", " ").replaceAll(" +", "").replace(" ", "").replaceAll(">", "").replace("<", "").toLowerCase();
                 //String tokentratado = CheckSpecialCharacters(parseTags(parseDecimalNumbers(parseAcronyms(parseSpecialCharacters(parseEndOfSentence(sts))))));
                 

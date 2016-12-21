@@ -52,7 +52,7 @@ public class ProgramaRI {
 
             if (optionFirst.equals("1")) {
                 System.out.println("Insira o caminho para o ficheiro ler:");
-                String folderPath = "src\\main\\java\\grupori\\projectoriultimo\\teste";
+                String folderPath = sc.next();
 
                 while (!(option.equals("yes") || option.equals("no"))) {
                     System.out.println("Quem inserir algum ficheiro de stopwords?(yes\\no)");
@@ -66,6 +66,7 @@ public class ProgramaRI {
                         System.out.print("Enter the collection path: ");
                         collectionPath = sc.next();
                         file = new File(collectionPath);
+                        tk.LoadStopWords(collectionPath);
                         if (!file.exists()) {
                             System.err.println("Error reading the file/collection!");
                         }
@@ -74,7 +75,7 @@ public class ProgramaRI {
                 }
                 if (option.equals("no")) {
                     System.out.println("A utilizar o ficheiro default: stopwords_en.txt");
-                    urlStopwords = "src\\main\\java\\grupori\\projectoriultimo\\stopwords_en.txt";
+                    urlStopwords = "stopwords_en.txt";
                     tk.LoadStopWords(urlStopwords);
                 }
                 while (!(optionStemmer.equals("yes") || optionStemmer.equals("no"))) {
@@ -89,13 +90,21 @@ public class ProgramaRI {
 
             } else if (optionFirst.equals("2")) {
                 File checkFile = new File("Index");
+                File file;
                 if (checkFile.isDirectory() && checkFile.list().length == 0) {
                     System.out.println("Index nao existente.");
                 } else {
-                    System.out.println("Insira os termos para pesqueisar:");
-                    ArrayList<String> resultados = new ArrayList<>(rnk.score(rnk.calcScore(sea.seacher(sc.nextLine()))));
-                    for (String results : resultados) {
-                        System.out.println(results);
+                    tk.LoadStopWords("stopwords_en.txt");
+                    System.out.println("Insira os termos para pesquisar:");
+                    String searchInput = sc.next();
+
+                    ArrayList<String> resultados = new ArrayList<>(rnk.score(rnk.calcScore(sea.seacher(searchInput))));
+                    if (resultados.isEmpty()) {
+                        System.out.println("Stopword detectado");
+                    } else {
+                        for (String results : resultados) {
+                            System.out.println(results);
+                        }
                     }
                     System.out.println("Sair, acabou o programa");
                 }

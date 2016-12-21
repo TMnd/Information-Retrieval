@@ -42,7 +42,7 @@ public class Ranked {
             String key = parent.getKey();
             
             //Mudar para melhor output
-            arFinal.add("Key: " + indexDoc.get(key) + " Values: " + parent.getValue());
+            arFinal.add("Doc: " + indexDoc.get(key) + "\t Score: " + parent.getValue());
         }
         return arFinal;
     }

@@ -20,8 +20,8 @@ public class Seacher {
         Map<String, HashMap<Integer, Float>> mapSeacher = new HashMap<>();
         BufferedReader brSeacher = null;
         
-        ArrayList<String> arrayQuery = new ArrayList<>(token.receiveDoc(term));
-        
+        ArrayList<String> arrayQuery = new ArrayList<>(token.receiveDoc(term,true));
+
         for(String arQuery: arrayQuery){
             try {
                 for (groups group : groups.values()) {
@@ -29,9 +29,9 @@ public class Seacher {
                         continue;
                     }
                     if(arQuery.matches(regexNumbers)){
-                        brSeacher = Files.newBufferedReader(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\temp\\0.txt"));
+                        brSeacher = Files.newBufferedReader(java.nio.file.Paths.get("Index\\0.txt"));
                     }else{
-                        brSeacher = Files.newBufferedReader(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\temp\\" + groups.getGroupInitial(group) + ".txt"));    
+                        brSeacher = Files.newBufferedReader(java.nio.file.Paths.get("Index\\" + groups.getGroupInitial(group) + ".txt"));    
                     }
                 }
                 for (String line; (line = brSeacher.readLine()) != null;) {
@@ -55,7 +55,7 @@ public class Seacher {
                 }
 
                 brSeacher.close();
-                System.out.println(term + ": " + mapSeacher);
+
             } catch (IOException ex) {
                 System.out.println("O ficheiro de index nao detectado.");
             }

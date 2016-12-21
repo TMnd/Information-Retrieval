@@ -27,19 +27,20 @@ import org.jsoup.nodes.Element;
  * @author Mafalda Rodrigues
  */
 public class DocProcessor {
+
     Indexer index = new Indexer();
     Tokeneizer token = new Tokeneizer();
-    
+
     HashMap<Integer, String> map = new HashMap<>();
     int contSendDoc = 0; //Para no metodo de verificar memoria seja possivel ver quantos documentos foram lidos até ao momento do save
-    
+
     StringBuilder document = null;
     FileInputStream fis = null;
     CSVParser parser;
-    
-    private String Unzip(String SourceZip){
+
+    private String Unzip(String SourceZip) {
         String detination = SourceZip.substring(0, SourceZip.lastIndexOf("."));
-        try {    
+        try {
             ZipFile zipFile = new ZipFile(SourceZip);
             zipFile.extractAll(detination);
         } catch (ZipException ex) {
@@ -47,29 +48,29 @@ public class DocProcessor {
         }
         return detination;
     }
-    
-    public void readPath(String SourceZip, boolean stemmercheck){
+
+    public void readPath(String SourceZip, boolean stemmercheck) {
         try {
             File folder;
-            if(SourceZip.endsWith(".zip")){
+            if (SourceZip.endsWith(".zip")) {
                 folder = new File(Unzip(SourceZip));
-            }else{
+            } else {
                 folder = new File(SourceZip);
             }
-            
+
             File[] listOfFiles = folder.listFiles();
-            for(int i=0; i<listOfFiles.length;i++){
-                if(listOfFiles[i].getName().endsWith(".arff")){
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].getName().endsWith(".arff")) {
                     System.out.println("Indexing file: " + listOfFiles[i].getName());
-                    parseArff(listOfFiles[i],listOfFiles[i].getName(),stemmercheck);
-                }else if(listOfFiles[i].getName().endsWith(".csv")){
+                    parseArff(listOfFiles[i], listOfFiles[i].getName(), stemmercheck);
+                } else if (listOfFiles[i].getName().endsWith(".csv")) {
                     try {
                         System.out.println("Indexing file: " + listOfFiles[i].getName());
-                        parseCSV(listOfFiles[i],listOfFiles[i].getName(),stemmercheck);
+                        parseCSV(listOfFiles[i], listOfFiles[i].getName(), stemmercheck);
                     } catch (IOException ex) {
                         Logger.getLogger(DocProcessor.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }else{
+                } else {
                     System.out.println("File extention not supported.");
                 }
             }
@@ -80,20 +81,22 @@ public class DocProcessor {
         } catch (IOException ex) {
             Logger.getLogger(DocProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }    
-    
-    private void parseArff(File filePath,String fileName,boolean stemmercheck){
+    }
+
+    private void parseArff(File filePath, String fileName, boolean stemmercheck) {
         BufferedReader bufferedReader = null;
         String line;
-        Pattern padrao = Pattern.compile("\\\"([^\\\"]*)\\\""); 
+        Pattern padrao = Pattern.compile("\\\"([^\\\"]*)\\\"");
         String regex_inicial = "@";
-        
+
         try {
+            System.out.println("filepath: " + filePath);
+            System.out.println("filename: " + fileName);
             bufferedReader = new BufferedReader(new FileReader(filePath));
         } catch (FileNotFoundException ex) {
             System.out.println("Wasn't enable to open the file");
         }
-            
+
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 //ler todas as linhas que nao tenham um @ (como foi descrito na variavel regex_inicial)
@@ -104,54 +107,54 @@ public class DocProcessor {
                         while (matcher.find()) {
                             int docID = Integer.parseInt(lineSplit[0]);
                             String doc = matcher.group(1).toLowerCase();
-                            
-                            index.addIndexHM(token.receiveDoc(doc,stemmercheck), docID, fileName);
+
+                            index.addIndexHM(token.receiveDoc(doc, stemmercheck), docID, fileName);
                             index.memoryStore(contSendDoc);
                         }
                     }
                 }
             }
-        } catch (IOException ex) {  
+        } catch (IOException ex) {
             Logger.getLogger(DocProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void parseCSV(File filePath, String fileName,boolean stemmercheck) throws FileNotFoundException, IOException{
+
+    private void parseCSV(File filePath, String fileName, boolean stemmercheck) throws FileNotFoundException, IOException {
         fis = new FileInputStream(filePath);
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
         parser = new CSVParser(br, CSVFormat.DEFAULT.withHeader());
         Iterator it = parser.iterator();
 
-        while(it.hasNext()){
+        while (it.hasNext()) {
             document = new StringBuilder();
             contSendDoc++;
             CSVRecord record = (CSVRecord) it.next();
             int idDoc = Integer.parseInt(record.get("Id"));
 
-            if(!fis.toString().contains("Tags")){
+            if (!fis.toString().contains("Tags")) {
 
-            String aux;
-                if(record.isMapped("Title") && record.isMapped("Body")){
+                String aux;
+                if (record.isMapped("Title") && record.isMapped("Body")) {
                     document.append(record.get("Title"));
                     document.append(" ");
-                    //texto.append(CSVRegex(record.get("Body")));
-                    document.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
-                }else {
-                    //texto.append(CSVRegex(record.get("Body")));
-                    
-                    document.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
+                    //document.append(CSVRegex(record.get("Body")));
+                    document.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>", "").trim()); //remove tags;
+                } else {
+                    //document.append(CSVRegex(record.get("Body")));
+
+                    document.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>", "").trim()); //remove tags;
                 }
 
                 aux = document.toString().toLowerCase();
-        
-                index.addIndexHM(token.receiveDoc(aux,stemmercheck), idDoc, fileName);
+
+                index.addIndexHM(token.receiveDoc(aux, stemmercheck), idDoc, fileName);
                 index.memoryStore(contSendDoc);
             }
         }
     }
-    
+
     public StringBuilder CSVRegex(String str) {
-        
+
         Elements doc = Jsoup.parse(str).select("p,li,a");
 
         StringBuilder sb = new StringBuilder();
@@ -161,7 +164,5 @@ public class DocProcessor {
 
         return sb;
     }
-  
+
 }
-
-

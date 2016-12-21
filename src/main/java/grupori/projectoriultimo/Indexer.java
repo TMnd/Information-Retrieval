@@ -40,7 +40,7 @@ public class Indexer {
 
     //Calculo
     static DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
-    private static final DecimalFormat df = new DecimalFormat("#.###", otherSymbols);
+    private static final DecimalFormat df = new DecimalFormat("#.######", otherSymbols);
 
     public void addIndexHM(ArrayList<String> arFromTokeneizer, int DocId, String fileName) {
         if (!docMap.containsKey(DocId)) {
@@ -135,7 +135,7 @@ public class Indexer {
         }
 
         //Criar ficheiro pronto para gravar
-        File file = new File("src\\main\\java\\grupori\\projectoriultimo\\temp\\" + letter + ".txt");
+        File file = new File("Index\\" + letter + ".txt");
         file.createNewFile();
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         bwmapReduce = new BufferedWriter(fw);
@@ -163,7 +163,14 @@ public class Indexer {
                     auxMap.get(elements[0]).add(elements[1]);
                 }
             }
-
+            /*System.out.println("firstkey: " + auxMap.firstKey());
+            System.out.println("firstkey values: " " + auxMap.firstEntry().getValue());*/
+            /*for(Map.Entry<String, ArrayList<String>> parent : auxMap.entrySet()){
+                String key = parent.getKey();
+                
+                
+                System.out.println("key: " + key + " values: " + auxMap.get(key));
+            }   */        //System.out.println(auxMap.firstKey());
             mergeSaveDisc.append(auxMap.firstKey()).append(",").append(auxMap.firstEntry().getValue()).append(System.lineSeparator());
             auxMap.remove(auxMap.firstEntry().getKey());
 
@@ -240,9 +247,12 @@ public class Indexer {
             System.out.println("Index " + grupo + " escrito!");
             System.out.println("A remover os subindex " + grupo);
             System.out.println("Numero maximo do contador (cont): " + cont);
-            /*for (int i = 0; i < cont; i++) {
-             Files.delete(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\index\\" + group.getGroupInitial(group) + "\\" + i + ".txt"));
-            }*/
+            
+            File dir = new File("subindex\\" + grupo);
+            for (File file: dir.listFiles()) {
+ 
+                file.delete();
+            }
         }
     }
 
@@ -255,7 +265,7 @@ public class Indexer {
     }
 
     public void memoryStore(int counter) throws IOException {
-        if (100.0 * (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Runtime.getRuntime().maxMemory() > 30) {
+        if (100.0 * (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / Runtime.getRuntime().maxMemory() > 70) {
             System.out.println("A gravar os ficheiros...");
             System.out.println("numero de doc lidos: " + counter);
             saveToDisc();
