@@ -18,16 +18,7 @@ public class Seacher {
         
         ArrayList<String> arrayQuery = new ArrayList<>(tk.receberDocumento(termo));
         
-        System.out.println(arrayQuery);
-        
-        String[] letraStart = termo.split(" ");
-        
-        //for (int i = 0; i < letraStart.length; i++) {
         for(String arQuery: arrayQuery){
-            //Filtrar aqui
-            //char inicioLetra = arQuery.charAt(0);
-            //System.out.println("letra iniciais: " + inicioLetra);
-
             try {
                 for (groups group : groups.values()) {
                     if (!group.matchesGroup(group, arQuery)) {
@@ -39,7 +30,6 @@ public class Seacher {
                     }else{
                         br = Files.newBufferedReader(java.nio.file.Paths.get("src\\main\\java\\grupori\\projectoriultimo\\temp\\" + groups.getGroupInitial(group) + ".txt"));    
                     }
-                    //System.out.println("Inserir o index " + groups.getGroupInitial(group) + " para memoria!");
                 }
                 for (String line; (line = br.readLine()) != null;) {
                     String[] termInfo = line.split(",");
@@ -63,36 +53,12 @@ public class Seacher {
 
                 br.close();
                 //System.out.println("map size: " + map.size());
-               // System.out.println(termo + ": (sem calculos)" + map);
-                calculos(map);
+                System.out.println(termo + ": " + map);
                // System.out.println(termo + ": (com calculos)" + map);
             } catch (IOException ex) {
                 System.out.println("O ficheiro de index nao detectado.");
             }
         }
         return map;
-    }
-
-    public void calculos(Map<String, HashMap<Integer, Float>> map) {
-        for (Map.Entry<String, HashMap<Integer, Float>> parent : map.entrySet()) {
-            float wTotal = 0;
-            float somatorioRaizQuadrada;
-            float calculo = 0;
-            String key = parent.getKey();
-
-            for (Map.Entry<Integer, Float> child : map.get(key).entrySet()) {
-                int subKey = child.getKey();
-
-                if (map.get(key).get(subKey) != null) {
-                    wTotal += Math.pow(map.get(key).get(subKey), 2);
-                }
-            }
-            somatorioRaizQuadrada = (float) Math.sqrt(wTotal);
-            for (Map.Entry<Integer, Float> child : map.get(key).entrySet()) {
-                int subKey = child.getKey();
-                calculo = (float) ((1 + Math.log(map.get(key).get(subKey))) / somatorioRaizQuadrada);
-                map.get(key).put(subKey, calculo);
-            }
-        }
     }
 }

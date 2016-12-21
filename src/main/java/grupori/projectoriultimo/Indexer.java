@@ -237,7 +237,7 @@ public class Indexer {
         }
 
         bwDocId.close();
-
+        
         mappingHM.clear();
         System.gc();
     }
@@ -291,44 +291,6 @@ public class Indexer {
 
         String[] elementosLinha = Linha.split(",");
         
-        /*for(int i=0;i<elementosLinha.length;i++){
-            
-            if(i==0){
-                tfcalculo.put(elementosLinha[0], new HashMap<>());
-            }else{
-                String[] values = elementosLinha[i].replaceAll("\\[|\\]", "").replaceAll(" ","").split(":");
-                tfcalculo.get(elementosLinha[0]).put(Integer.parseInt(values[0]), Float.parseFloat(values[1]));
-            }
-        }
-        
-        for (Map.Entry<String, HashMap<Integer, Float>> parent : tfcalculo.entrySet()) {
-            String key = parent.getKey();
-            
-            for(Map.Entry<Integer, Float> child : tfcalculo.get(key).entrySet()){
-                int subkey = child.getKey();
-                 
-                wTotal += Math.pow(tfcalculo.get(key).get(subkey), 2);
-            }
-        }
-        somatorioRaizQuadrada = (float) Math.sqrt(wTotal);
-        for (Map.Entry<String, HashMap<Integer, Float>> parent : tfcalculo.entrySet()) {
-            String key = parent.getKey();
-            
-            for(Map.Entry<Integer, Float> child : tfcalculo.get(key).entrySet()){
-                int subkey = child.getKey();
-                 
-                calculo = (float) ((1 + Math.log(tfcalculo.get(key).get(subkey))) / somatorioRaizQuadrada);
-                tfcalculo.get(key).put(subkey, calculo);
-            }
-        }
-        //System.out.println(tfcalculo);
-         StringBuilder teste = null;
-        for(Map.Entry<String, HashMap<Integer, Float>> parent : tfcalculo.entrySet()){
-            String key = parent.getKey();
-            teste = new StringBuilder();
-            teste.append(key).append(",").append(tfcalculo.get(key)).append(System.lineSeparator());
-        }*/
-        
         for (int i = 1; i < elementosLinha.length; i++) {
             String[] valoresLinha = elementosLinha[i].replaceAll("\\[|\\]", "").split(":");
            // System.out.println(Arrays.toString(valoresLinha));
@@ -350,6 +312,4 @@ public class Indexer {
         sbCalculos.append(System.lineSeparator());
         return sbCalculos.toString();
     }
-    
-  
 }
