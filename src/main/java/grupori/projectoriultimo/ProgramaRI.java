@@ -1,14 +1,9 @@
 package grupori.projectoriultimo;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
+ /*
  * @author joaoa
  */
 public class ProgramaRI {
@@ -60,10 +55,10 @@ public class ProgramaRI {
         }else{
             System.out.println("nao e zip");
         //    try {
-                dp.readPath(caminhoFicheiroComprimido);
+             // dp.readPath(caminhoFicheiroComprimido);
                 System.out.println("Indexação Completa!");
                 System.out.println("Insira os termos para pesqueisar:");
-                //dasda.reducaoIndex();
+                dasda.reducaoIndex();
                /* Map<Integer, Float> scorehm = new HashMap<>(rnk.calculoScore(sea.seacher(sc.nextLine())));
                  rnk.calculoScore(sea.seacher(sc.nextLine())).toString();
                   int contadorTop5 = 0;

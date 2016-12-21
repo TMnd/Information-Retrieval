@@ -30,6 +30,10 @@ import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.jsoup.select.Elements;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  *
@@ -41,6 +45,7 @@ public class DocProcessor {
     
     HashMap<Integer, String> map = new HashMap<>();
     int contEnviarDoc = 0;
+
     
     StringBuilder texto = null;
     FileInputStream fis = null;
@@ -76,7 +81,7 @@ public class DocProcessor {
                parseArff(listOfFiles[i]);
            }else{
                 System.out.println("Ficheiro: " + listOfFiles[i].toString());
-                parseCSV(listOfFiles[i]);
+                parseCSV(listOfFiles[i],listOfFiles[i].getName());
            }
         }
         System.out.println("Last save");
@@ -124,7 +129,7 @@ public class DocProcessor {
         }
     }
     
-    private void parseCSV(File caminhoFicheiro) throws FileNotFoundException, IOException{
+    private void parseCSV(File caminhoFicheiro, String nomeFicheiro) throws FileNotFoundException, IOException{
         fis = new FileInputStream(caminhoFicheiro);
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
         parser = new CSVParser(br, CSVFormat.DEFAULT.withHeader());
@@ -142,19 +147,43 @@ public class DocProcessor {
                 if(record.isMapped("Title") && record.isMapped("Body")){
                     texto.append(record.get("Title"));
                     texto.append(" ");
+                    //texto.append(CSVRegex(record.get("Body")));
                     texto.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
                 }else {
+                    //texto.append(CSVRegex(record.get("Body")));
+                    
                     texto.append(record.get("Body").replaceAll("(?s)<code>.*?</code>", "").replaceAll("<[^>]*>","").trim()); //remove tags;
                 }
 
                 aux = texto.toString().toLowerCase();
-
-                id.addTM(tk.receberDocumento(aux), idDoc);
+        
+                id.addTM(tk.receberDocumento(aux), idDoc, nomeFicheiro);
                 id.memory(contEnviarDoc);
             }
         }
-    } 
+    }
+     
+    private String CSVRegex2(String text) {
+        Document doc = Jsoup.parse(text);
+        doc.select("pre").remove();
+        doc.select("code").remove();
+        doc.select("a").remove();
+
+        return doc.body().html();
+    }
     
+    public StringBuilder CSVRegex(String str) {
+        
+        Elements doc = Jsoup.parse(str).select("p,li,a");
+
+        StringBuilder sb = new StringBuilder();
+        for (Element x : doc) {
+            sb.append(x.text()).append(" ");
+        }
+
+        return sb;
+    }
+  
 }
 
 

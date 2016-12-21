@@ -72,9 +72,22 @@ public class Tokeneizer {
     public ArrayList<String> receberDocumento(String line) throws IOException {
 
         ar = new ArrayList<>();
+        //System.out.println(line);
         
-        
+        /*Matcher matcher = onlyWords.matcher(sb.toString());
+        StringBuilder sbFinal = new StringBuilder();
 
+        while (matcher.find()) {
+            sbFinal.append(matcher.group(0)).append(" ");
+        }*/
+        
+        
+        
+        
+        
+        
+        
+        
         //Dividir por tokens o parte do documento
       /*  StringTokenizer st = new StringTokenizer(line.replaceAll("\\<[^>]*>", " ").replaceAll("[^\\w'. ]", " ").
          replaceAll("(?!([0-9]+))([\\.\\,]+)(?!([0-9]+))", " ").replaceAll("\\.", " ").replaceAll(" +", " ").trim()); */
@@ -87,14 +100,15 @@ public class Tokeneizer {
             //Verifica se o token é uma stopword ou não
 
             if (!StopWord.contains(sts)) {
-
+                
                 //Passa o token pelo stemmer e pelo stemmer
                 String tokentratado = CheckSpecialCases(sts).replaceAll("\\'", " ").replaceAll(" +", "").replace(" ", "").replaceAll(">", "").replace("<", "").toLowerCase();
                 //String tokentratado = CheckSpecialCharacters(parseTags(parseDecimalNumbers(parseAcronyms(parseSpecialCharacters(parseEndOfSentence(sts))))));
+                
                 if (!tokentratado.isEmpty()) {
                     String tokenStemmer = stemming(tokentratado);
 
-                   // System.out.println("sts: " + tokenStemmer);
+                   //System.out.println("sts: " + tokenStemmer);
                     //Insere o token já tratado num arraylist
                     ar.add(tokenStemmer);
                 }
@@ -102,7 +116,6 @@ public class Tokeneizer {
         }
         //Devolve o arraylist já preenchido de tokens
         return ar;
-
     }
 
     public String parseEndOfSentence(String text) {
